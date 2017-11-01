@@ -14,9 +14,8 @@ import ru.leoltron.snake.gui.drawers.StaticObjectDrawer;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.security.KeyException;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.Set;
 
 public class GamePanel extends JPanel {
 
@@ -30,16 +29,21 @@ public class GamePanel extends JPanel {
         this.game = game;
         this.width = width;
         this.height = height;
+        initDrawers();
+        checkDrawersForAllFieldObjects();
+    }
+
+    private void checkDrawersForAllFieldObjects() {
         val reflections = new Reflections("ru.leoltron.snake.game.entity");
         val allClasses = reflections.getSubTypesOf(FieldObject.class);
-        for (val cls: allClasses) {
-            try {
-                if (!drawers.containsKey(cls))
-                    throw new KeyException(String.format("We don't have drawer for %s", cls.toString()));
-            } catch (KeyException e) {
-                e.printStackTrace();
-            }
+        for (val foClass : allClasses) {
+            if (Modifier.isAbstract(foClass.getModifiers())) continue;
+            if (!drawers.containsKey(foClass))
+                new DrawerNotFoundException(foClass).printStackTrace();
         }
+    }
+
+    private void initDrawers() throws IOException {
         drawers.put(Apple.class, new StaticObjectDrawer("resources", "textures", "apple.png"));
         drawers.put(Wall.class, new StaticObjectDrawer("resources", "textures", "brick.png"));
         drawers.put(SnakePart.class, new SnakeDrawer());
