@@ -97,7 +97,7 @@ public class ClassicSnakeController {
     void respawnSnake(GameField gameField) {
         respawnSnake(
                 gameField,
-                startPoint != null ? startPoint : new GamePoint(3, gameField.getFieldWidth() - 3),
+                startPoint != null ? startPoint : new GamePoint(3, gameField.getFieldHeight() - 3),
                 snakeLength);
     }
 
