@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 public class GamePanel extends JPanel {
 
+    private final double scale;
     private int width;
     private int height;
     private Game game;
@@ -26,9 +27,14 @@ public class GamePanel extends JPanel {
 
 
     public GamePanel(int width, int height, Game game) throws IOException {
+        this(width, height, game, 1d);
+    }
+
+    public GamePanel(int width, int height, Game game, double scale) throws IOException {
         this.game = game;
         this.width = width;
         this.height = height;
+        this.scale = scale;
         registerDrawers();
         checkDrawersForAllFieldObjects();
     }
@@ -54,7 +60,8 @@ public class GamePanel extends JPanel {
         if (fieldObject == null)
             return null;
         val imgGetter = drawers.get(fieldObject.getClass());
-        return imgGetter == null ? null : imgGetter.getImage(fieldObject, game.getTime());
+        return imgGetter == null ? null : imgGetter.getImage(fieldObject, game.getTime())
+                .getScaledInstance((int) (64 * scale), (int) (64 * scale), Image.SCALE_SMOOTH);
     }
 
     @Override

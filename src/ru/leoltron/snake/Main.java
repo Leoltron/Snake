@@ -7,10 +7,12 @@ import ru.leoltron.snake.game.generators.ClassicAppleGenerator;
 import ru.leoltron.snake.game.generators.ClassicGameFieldGenerator;
 import ru.leoltron.snake.gui.GamePanel;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.IOException;
 
 import static ru.leoltron.snake.game.Direction.*;
@@ -30,13 +32,22 @@ public class Main {
         frame.setVisible(true);
         frame.addKeyListener(listener);
         frame.setLocationRelativeTo(null);
+        frame.setTitle("Snake");
+        try {
+            frame.setIconImage(ImageIO.read(new File(String.join(File.separator,
+                    "resources", "textures", "snake", "head.png"))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
-        val fieldWidth = 20;
-        val fieldHeight = 12;
-        val panelWidth = fieldWidth * 64;
-        val panelHeight = fieldHeight * 64;
+        val scale = 0.25d;
+
+        val fieldWidth = 64;
+        val fieldHeight = 32;
+        val panelWidth = (int) (fieldWidth * 64 * scale);
+        val panelHeight = (int) (fieldHeight * 64 * scale);
         val game = new Game(
                 new ClassicAppleGenerator(),
                 new ClassicGameFieldGenerator(),
@@ -44,7 +55,7 @@ public class Main {
                 fieldWidth,
                 fieldHeight);
         game.startNewGame();
-        val gui = new GamePanel(fieldWidth, fieldHeight, game);
+        val gui = new GamePanel(fieldWidth, fieldHeight, game, scale);
         val frame = new JFrame();
 
         val listener = new KeyListener() {
