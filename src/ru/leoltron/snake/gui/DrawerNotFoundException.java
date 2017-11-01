@@ -1,6 +1,6 @@
 package ru.leoltron.snake.gui;
 
-public class DrawerNotFoundException extends Exception {
+public class DrawerNotFoundException extends RuntimeException {
     public final Class objClass;
 
     public DrawerNotFoundException(Class objClass) {

@@ -89,7 +89,7 @@ public class Main {
         while (true) {
             game.tick();
             SwingUtilities.updateComponentTreeUI(frame);
-            Thread.sleep(300);
+            Thread.sleep(100);
         }
     }
 }

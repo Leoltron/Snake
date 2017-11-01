@@ -29,7 +29,7 @@ public class GamePanel extends JPanel {
         this.game = game;
         this.width = width;
         this.height = height;
-        initDrawers();
+        registerDrawers();
         checkDrawersForAllFieldObjects();
     }
 
@@ -39,11 +39,11 @@ public class GamePanel extends JPanel {
         for (val foClass : allClasses) {
             if (Modifier.isAbstract(foClass.getModifiers())) continue;
             if (!drawers.containsKey(foClass))
-                new DrawerNotFoundException(foClass).printStackTrace();
+                throw new DrawerNotFoundException(foClass);
         }
     }
 
-    private void initDrawers() throws IOException {
+    private void registerDrawers() throws IOException {
         drawers.put(Apple.class, new StaticObjectDrawer("resources", "textures", "apple.png"));
         drawers.put(Wall.class, new StaticObjectDrawer("resources", "textures", "brick.png"));
         drawers.put(SnakePart.class, new SnakeDrawer());
