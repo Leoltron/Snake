@@ -97,10 +97,12 @@ public class Main {
             }
         };
         setFrame(frame, gui, panelWidth, panelHeight, listener);
-        while (true) {
+        val period = 100;
+        val timer = new Timer(period, actionEvent -> {
             game.tick();
             SwingUtilities.updateComponentTreeUI(frame);
-            Thread.sleep(100);
-        }
+        });
+        timer.start();
+
     }
 }
