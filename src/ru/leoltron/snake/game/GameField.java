@@ -36,7 +36,7 @@ public class GameField {
         return object1.isDead() ? object2 : object1;
     }
 
-    FieldObject getObjectAt(GamePoint point) {
+    public FieldObject getObjectAt(GamePoint point) {
         return fieldObjects.getOrDefault(point, null);
     }
 

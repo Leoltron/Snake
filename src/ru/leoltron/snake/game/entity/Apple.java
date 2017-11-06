@@ -7,4 +7,8 @@ public class Apple extends FieldObject {
         setDead();
     }
 
+    @Override
+    public FieldObject clone() {
+        return new Apple();
+    }
 }

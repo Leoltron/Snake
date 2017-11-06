@@ -3,8 +3,8 @@ package ru.leoltron.snaketests;
 import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
-import ru.leoltron.snake.game.ClassicSnakeController;
 import ru.leoltron.snake.game.GameField;
+import ru.leoltron.snake.game.controller.module.SnakeController;
 import ru.leoltron.snake.game.entity.Apple;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.SnakePart;
@@ -21,7 +21,7 @@ public class FieldObjectsInteractionTests extends Assert {
 
     @Test
     public void testSnakeWallBreak() {
-        val snake = new SnakePart(new ClassicSnakeController());
+        val snake = new SnakePart(new SnakeController());
         val wall = new Wall();
 
         collide(snake, wall);
@@ -32,7 +32,7 @@ public class FieldObjectsInteractionTests extends Assert {
 
     @Test
     public void testSnakeAppleEat() {
-        val snake = new SnakePart(new ClassicSnakeController());
+        val snake = new SnakePart(new SnakeController());
         val apple = new Apple();
 
         collide(snake, apple);

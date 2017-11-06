@@ -1,13 +1,15 @@
-package ru.leoltron.snake.game;
+package ru.leoltron.snake.game.controller.module;
 
 import lombok.Setter;
 import lombok.val;
+import ru.leoltron.snake.game.Direction;
+import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.SnakePart;
 import ru.leoltron.snake.util.GamePoint;
 
 import java.util.LinkedList;
 
-public class ClassicSnakeController {
+public class SnakeController {
     private static final int DEFAULT_SNAKE_LENGTH = 4;
     private final int snakeLength;
 
@@ -21,11 +23,11 @@ public class ClassicSnakeController {
     private int snakePartsGoingToAdd;
     private Direction currentDirection;
 
-    public ClassicSnakeController() {
+    public SnakeController() {
         this(DEFAULT_SNAKE_LENGTH);
     }
 
-    public ClassicSnakeController(int snakeLength) {
+    public SnakeController(int snakeLength) {
         if (snakeLength < 1)
             throw new IllegalArgumentException("Snake length must be positive!");
         this.snakeLength = snakeLength;
@@ -70,7 +72,7 @@ public class ClassicSnakeController {
         snakePartsGoingToAdd++;
     }
 
-    void tick(GameField field) {
+    public void tick(GameField field) {
         if (isSnakeDead(field)) return;
 
         if (snakePartsGoingToAdd > 0)
@@ -94,14 +96,14 @@ public class ClassicSnakeController {
         field.addEntity(location, newHead);
     }
 
-    void respawnSnake(GameField gameField) {
+    public void respawnSnake(GameField gameField) {
         respawnSnake(
                 gameField,
                 startPoint != null ? startPoint : new GamePoint(3, gameField.getFieldHeight() - 3),
                 snakeLength);
     }
 
-    void setCurrentDirection(Direction direction) {
+    public void setCurrentDirection(Direction direction) {
         if (getSnakeSize() > 1 && body.get(1).equals(getHeadLocation().translated(direction)))
             return;
         currentDirection = direction;
@@ -111,7 +113,7 @@ public class ClassicSnakeController {
         return body.getFirst();
     }
 
-    boolean isSnakeDead(GameField field) {
+    public boolean isSnakeDead(GameField field) {
         return body == null ||
                 body.isEmpty() ||
                 !(field.getObjectAt(getHeadLocation()) instanceof SnakePart) ||

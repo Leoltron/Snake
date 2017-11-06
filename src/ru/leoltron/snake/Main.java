@@ -13,7 +13,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 
-import static ru.leoltron.snake.game.controller.ModuleGameController.getClassicGameController;
+import static ru.leoltron.snake.game.controller.SingleLevelGameController.getClassicGameController;
 
 public class Main {
     private static void setFrame(JFrame frame,

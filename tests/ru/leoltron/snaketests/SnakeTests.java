@@ -3,13 +3,14 @@ package ru.leoltron.snaketests;
 import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
-import ru.leoltron.snake.game.ClassicSnakeController;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.Game;
 import ru.leoltron.snake.game.GameField;
+import ru.leoltron.snake.game.controller.SingleLevelGameController;
+import ru.leoltron.snake.game.controller.module.SnakeController;
+import ru.leoltron.snake.game.controller.module.generator.AppleGenerator;
+import ru.leoltron.snake.game.controller.module.generator.BorderGameFieldGenerator;
 import ru.leoltron.snake.game.entity.SnakePart;
-import ru.leoltron.snake.game.generators.AppleGenerator;
-import ru.leoltron.snake.game.generators.ClassicGameFieldGenerator;
 import ru.leoltron.snake.util.GamePoint;
 
 public class SnakeTests extends Assert {
@@ -27,10 +28,10 @@ public class SnakeTests extends Assert {
 
     @Test
     public void testSnakeSuicide() {
-        val game = new Game(
+        val game = new Game(new SingleLevelGameController(
                 new EmptyAppleGenerator(),
-                new ClassicGameFieldGenerator(),
-                new ClassicSnakeController(5),
+                new BorderGameFieldGenerator(),
+                new SnakeController(5)),
                 10, 10);
         game.startNewGame();
 
@@ -41,10 +42,10 @@ public class SnakeTests extends Assert {
 
     @Test
     public void testSnakeTailFollowing() {
-        val game = new Game(
+        val game = new Game(new SingleLevelGameController(
                 new EmptyAppleGenerator(),
-                new ClassicGameFieldGenerator(),
-                new ClassicSnakeController(4),
+                new BorderGameFieldGenerator(),
+                new SnakeController(4)),
                 10, 10);
         game.startNewGame();
 
@@ -72,10 +73,10 @@ public class SnakeTests extends Assert {
         val width = 10;
         val height = 10;
 
-        val game = new Game(
+        val game = new Game(new SingleLevelGameController(
                 new EmptyAppleGenerator(),
-                new ClassicGameFieldGenerator(),
-                new ClassicSnakeController(4),
+                new BorderGameFieldGenerator(),
+                new SnakeController(4)),
                 width, height);
         game.startNewGame();
 
