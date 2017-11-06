@@ -29,7 +29,7 @@ public class BorderGameFieldGenerator extends GameFieldGenerator {
         return objects;
     }
 
-    private static void addWallAt(Map<GamePoint, FieldObject> objectMap, int x, int y) {
+    protected static void addWallAt(Map<GamePoint, FieldObject> objectMap, int x, int y) {
         objectMap.put(new GamePoint(x, y), new Wall());
     }
 }
