@@ -5,6 +5,7 @@ import ru.leoltron.snake.game.ClassicSnakeController;
 import ru.leoltron.snake.game.Game;
 import ru.leoltron.snake.game.generators.ClassicAppleGenerator;
 import ru.leoltron.snake.game.generators.ClassicGameFieldGenerator;
+import ru.leoltron.snake.game.generators.RandomGameFieldGenerator;
 import ru.leoltron.snake.gui.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -50,7 +51,7 @@ public class Main {
         val panelHeight = (int) (fieldHeight * 64 * scale);
         val game = new Game(
                 new ClassicAppleGenerator(),
-                new ClassicGameFieldGenerator(),
+                new RandomGameFieldGenerator(),
                 new ClassicSnakeController(),
                 fieldWidth,
                 fieldHeight);
