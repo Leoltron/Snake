@@ -2,12 +2,13 @@ package ru.leoltron.snake.game.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.leoltron.snake.game.ClassicSnakeController;
+import lombok.val;
 import ru.leoltron.snake.game.Direction;
+import ru.leoltron.snake.game.controller.module.SnakeController;
 
 public class SnakePart extends FieldObject {
 
-    private ClassicSnakeController snakeController;
+    private SnakeController snakeController;
 
     @Getter
     @Setter
@@ -16,7 +17,7 @@ public class SnakePart extends FieldObject {
     @Setter
     private Direction nextPartDirection;
 
-    public SnakePart(ClassicSnakeController snakeController) {
+    public SnakePart(SnakeController snakeController) {
         this.snakeController = snakeController;
     }
 
@@ -34,5 +35,13 @@ public class SnakePart extends FieldObject {
             snakeController.onAppleEaten();
         else
             setDead();
+    }
+
+    @Override
+    public FieldObject clone() {
+        val part = new SnakePart(this.snakeController);
+        part.prevPartDirection = prevPartDirection;
+        part.nextPartDirection = nextPartDirection;
+        return part;
     }
 }

@@ -16,4 +16,6 @@ public abstract class FieldObject {
 
     public void tick() {
     }
+
+    public abstract FieldObject clone();
 }

@@ -9,4 +9,9 @@ public class Wall extends FieldObject {
     public void onCollisionWith(FieldObject object) {
         object.setDead();
     }
+
+    @Override
+    public FieldObject clone() {
+        return new Wall();
+    }
 }

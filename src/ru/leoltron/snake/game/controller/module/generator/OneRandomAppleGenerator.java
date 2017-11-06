@@ -1,9 +1,9 @@
-package ru.leoltron.snake.game.generators;
+package ru.leoltron.snake.game.controller.module.generator;
 
 import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.Apple;
 
-public class ClassicAppleGenerator implements AppleGenerator {
+public class OneRandomAppleGenerator implements AppleGenerator {
     private Apple apple;
 
     @Override
