@@ -25,6 +25,7 @@ public class GamePanel extends JPanel {
     private Game game;
     private HashMap<Class, IDrawer> drawers = new HashMap<>();
 
+    private boolean drawGrid = false;
 
     public GamePanel(int width, int height, Game game) throws IOException {
         this(width, height, game, 1d);
@@ -66,13 +67,53 @@ public class GamePanel extends JPanel {
 
     @Override
     public void paint(Graphics graphics) {
+        if (drawGrid)
+            drawGrid(graphics);
+        drawFieldObjects(graphics);
+        if (game.isGameOver())
+            drawGameOverString(graphics);
+        else if (game.isPaused())
+            drawPausedString(graphics);
+    }
+
+    private void drawFieldObjects(Graphics graphics) {
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
                 drawFieldObject(graphics, x, y);
-        if (game.isGameOver())
-            drawCenteredString(graphics, "Game Over",
-                    getWidth() / 2, getHeight() / 2,
-                    getFont());
+    }
+
+    private void drawGameOverString(Graphics graphics) {
+        graphics.setColor(Color.RED);
+        drawCenteredString(graphics, "Game Over",
+                getWidth() / 2, getHeight() / 2,
+                getFont().deriveFont(32f));
+    }
+
+    private void drawPausedString(Graphics graphics) {
+        graphics.setColor(Color.BLUE);
+        drawCenteredString(graphics, "Paused",
+                getWidth() / 2, getHeight() / 2,
+                getFont().deriveFont(32f));
+    }
+
+    private void drawGrid(Graphics graphics) {
+        int lineX;
+        int lineY = (int) (height * (64 * scale));
+        for (int x = 0; x <= width; x++) {
+            lineX = (int) (x * (64 * scale));
+            graphics.drawLine(lineX - 1, -1, lineX - 1, lineY - 1);
+            graphics.drawLine(lineX, 0, lineX, lineY);
+        }
+        lineX = (int) (width * (64 * scale));
+        for (int y = 0; y <= height; y++) {
+            lineY = (int) (y * (64 * scale));
+            graphics.drawLine(-1, lineY - 1, lineX - 1, lineY - 1);
+            graphics.drawLine(0, lineY, lineX, lineY);
+        }
+    }
+
+    public void switchGridDrawMode() {
+        drawGrid = !drawGrid;
     }
 
     private void drawFieldObject(Graphics graphics, int fieldObjX, int fieldObjY) {
