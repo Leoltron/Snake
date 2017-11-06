@@ -4,10 +4,7 @@ import lombok.NonNull;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.controller.module.SnakeController;
-import ru.leoltron.snake.game.controller.module.generator.AppleGenerator;
-import ru.leoltron.snake.game.controller.module.generator.BorderGameFieldGenerator;
-import ru.leoltron.snake.game.controller.module.generator.GameFieldGenerator;
-import ru.leoltron.snake.game.controller.module.generator.OneRandomAppleGenerator;
+import ru.leoltron.snake.game.controller.module.generator.*;
 
 public class SingleLevelGameController implements GameController {
     private final GameFieldGenerator gameFieldGenerator;
@@ -54,6 +51,20 @@ public class SingleLevelGameController implements GameController {
         return new SingleLevelGameController(
                 new OneRandomAppleGenerator(),
                 new BorderGameFieldGenerator(),
+                new SnakeController());
+    }
+
+    public static SingleLevelGameController getPredefinedLevelGameController(String level) {
+        return new SingleLevelGameController(
+                new OneRandomAppleGenerator(),
+                new PredefinedFieldGenerator(level),
+                new SnakeController());
+    }
+
+    public static SingleLevelGameController getPredefinedLevelGameController(String[] level) {
+        return new SingleLevelGameController(
+                new OneRandomAppleGenerator(),
+                new PredefinedFieldGenerator(level),
                 new SnakeController());
     }
 }

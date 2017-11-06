@@ -48,6 +48,18 @@ public class Main {
         val panelHeight = (int) (fieldHeight * 64 * scale);
 
         val game = new Game(getClassicGameController(), fieldWidth, fieldHeight);
+        /* val game = new Game(getPredefinedLevelGameController("" +
+                "WWWWWWWWWW\n" +
+                "W     W  W\n" +
+                "W  W  W  W\n" +
+                "W  W  W  W\n" +
+                "W  W  W  W\n" +
+                "W  W  W  W\n" +
+                "W  W  W  W\n" +
+                "W  W  W  W\n" +
+                "W  W     W\n" +
+                "WWWWWWWWWW\n"
+        ), fieldWidth, fieldHeight);*/
         game.startNewGame();
         val gui = new GamePanel(fieldWidth, fieldHeight, game, scale);
         val frame = new JFrame();

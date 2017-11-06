@@ -44,6 +44,7 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
     }
 
     private boolean canBeMap(boolean[][] isWall) {
+        //TODO: verification
         return true;
     }
 
