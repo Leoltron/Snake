@@ -18,17 +18,24 @@ import java.util.Random;
 public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
 
     private final Random random = new Random();
+    private int length;
+    private int part;
 
-    public void generateFieldObjects(GameField gameField, int length, int part){
-        gameField.clear();
-        for (val entry :
-                generateFieldObjects(gameField.getFieldWidth(), gameField.getFieldHeight(), length, part).entrySet())
-            gameField.addEntity(entry.getKey(), entry.getValue());
+    public RandomGameFieldGenerator(){
+        length = 6;
+        part = 10;
+    }
+
+    public RandomGameFieldGenerator(int length, int part){
+        this.length = length;
+        part = Math.min(part, 10);
+        part = Math.max(part, 0);
+        this.part = part;
     }
 
     @Override
     public Map<GamePoint, FieldObject> generateFieldObjects(int fieldWidth, int fieldHeight) {
-            return generateFieldObjects(fieldWidth, fieldHeight, 6, 10);
+            return generateFieldObjects(fieldWidth, fieldHeight, this.length, this.part);
     }
 
     protected Map<GamePoint, FieldObject> generateFieldObjects(int fieldWidth, int fieldHeight, int length, int part){
@@ -96,7 +103,6 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
             isWall[0][i] = true;
             isWall[width - 1][i] = true;
         }
-        part = Math.min(part, 10);
         length = Math.min(length, Math.min(height / 4, width / 4));
         int countOfWalls = (int)((width - 1) * (height - 1) * part / 100);
         while (countOfWalls > 0){
