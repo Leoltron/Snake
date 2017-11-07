@@ -21,12 +21,12 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
     private int part;
 
     public RandomGameFieldGenerator() {
-        this(6, 10);
+        this(8, 15);
     }
 
     private RandomGameFieldGenerator(int length, int part) {
         this.length = length;
-        this.part = setInBounds(part, 0, 10);
+        this.part = setInBounds(part, 0, 15);
     }
 
     private static int setInBounds(int value, int min, int max) {
