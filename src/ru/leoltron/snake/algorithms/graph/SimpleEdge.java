@@ -20,7 +20,7 @@ public class SimpleEdge implements Edge{
         if (obj.getClass() != SimpleEdge.class)
             return false;
         SimpleEdge edge = (SimpleEdge)obj;
-        return edge.getFrom() == from && edge.getTo() == to;
+        return edge.getFrom() == from && edge.getTo() == to || edge.getFrom() == to && edge.getTo() == from;
     }
 
     @Override

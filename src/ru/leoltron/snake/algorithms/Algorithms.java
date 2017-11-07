@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public final class Algorithms {
-    public static ArrayList<Edge> getBridges(SimpleGraph graph){
-        val bridges = new ArrayList<Edge>();
+    public static HashSet<Edge> getBridges(SimpleGraph graph){
+        val bridges = new HashSet<Edge>();
         val enterTime = new HashMap<Vertex, Integer>();
         val upTime = new HashMap<Vertex, Integer>();
         Integer currentTime = 0;
@@ -22,12 +22,12 @@ public final class Algorithms {
         return bridges;
     }
 
-    public static ArrayList<ArrayList<Vertex>> buildConnectedComponents(SimpleGraph graph){
+    public static HashSet<HashSet<Vertex>> buildConnectedComponents(SimpleGraph graph){
         val used = new HashSet<Vertex>();
-        val components = new ArrayList<ArrayList<Vertex>>();
+        val components = new HashSet<HashSet<Vertex>>();
         for (val vertex : graph.getVertices()){
             if (used.contains(vertex)) continue;
-            val currentComponent = new ArrayList<Vertex>();
+            val currentComponent = new HashSet<Vertex>();
             findComponent(vertex, used, currentComponent);
             components.add(currentComponent);
         }
@@ -35,7 +35,7 @@ public final class Algorithms {
     }
 
     private static void findBridges(Vertex current, Vertex parent, HashMap<Vertex, Integer> enterTime,
-                                   HashMap<Vertex, Integer> upTime, ArrayList<Edge> bridges, Integer currentTime){
+                                   HashMap<Vertex, Integer> upTime, HashSet<Edge> bridges, Integer currentTime){
         enterTime.put(current, currentTime);
         upTime.put(current, currentTime++);
         for (val edge : current.getHeighbors()){
@@ -52,7 +52,7 @@ public final class Algorithms {
         }
     }
 
-    private static void findComponent(Vertex vertex, HashSet<Vertex> used, ArrayList<Vertex> vertices){
+    private static void findComponent(Vertex vertex, HashSet<Vertex> used, HashSet<Vertex> vertices){
         used.add(vertex);
         vertices.add(vertex);
         for (val edge : vertex.getHeighbors()){
