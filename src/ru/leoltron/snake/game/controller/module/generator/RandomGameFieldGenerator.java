@@ -2,6 +2,10 @@ package ru.leoltron.snake.game.controller.module.generator;
 
 
 import lombok.val;
+import ru.leoltron.snake.algorithms.Algorithms;
+import ru.leoltron.snake.algorithms.graph.SimpleEdge;
+import ru.leoltron.snake.algorithms.graph.SimpleGraph;
+import ru.leoltron.snake.algorithms.graph.Vertex;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.FieldObject;
@@ -33,25 +37,67 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
         do{
             isWall = generateRandomMap(fieldWidth, fieldHeight, length, part);
         } while (!canBeMap(isWall));
-        for (int i = 1; i < fieldWidth - 1; i++) {
-            for (int j = 1; j < fieldHeight - 1; j++) {
+        for (int i = 0; i < fieldWidth; i++) {
+            for (int j = 0; j < fieldHeight; j++) {
                 if (isWall[i][j])
                     addWallAt(objects, i, j);
             }
         }
-        objects.putAll(new BorderGameFieldGenerator().generateFieldObjects(fieldWidth, fieldHeight));
         return objects;
     }
 
     private boolean canBeMap(boolean[][] isWall) {
-        //TODO: verification
-        return true;
+        val graph = buildGraph(isWall);
+        return Algorithms.getBridges(graph).isEmpty()
+                && Algorithms.buildConnectedComponents(graph).size() == 1;
+    }
+
+    private SimpleGraph buildGraph(boolean[][] isWall) {
+        SimpleGraph graph = new SimpleGraph();
+        val vertexFromGamePoint = new HashMap<GamePoint, Vertex>();
+        int width = isWall.length;
+        int height = isWall[0].length;
+        for (int i = 0; i < width; i++){
+            for (int j = 0; j < height; j++) {
+                if (isWall[i][j]) continue;
+                val current = new GamePoint(i, j);
+                val currentVertex = new Vertex();
+                vertexFromGamePoint.put(current, currentVertex);
+                graph.getVertices().add(currentVertex);
+            }
+        }
+        for (int i = 0; i < width; i++){
+            for (int j = 0; j < height; j++) {
+                if (isWall[i][j]) continue;
+                val currentPosition = new GamePoint(i, j);
+                val currentVertex = vertexFromGamePoint.get(currentPosition);
+                for (val direction : Direction.values()) {
+                    val nextPosition = currentPosition.translated(direction);
+                    if (inRange(nextPosition, width, height) && !isWall[nextPosition.x][nextPosition.y]) {
+                        val nextVertex = vertexFromGamePoint.get(nextPosition);
+                        graph.addEdge(new SimpleEdge(currentVertex, nextVertex));
+                    }
+                }
+            }
+        }
+        return graph;
     }
 
     private boolean[][] generateRandomMap(int width, int height, int length, double part){
         boolean[][] isWall = new boolean[width][height];
+        for (int i = 0; i < width; i++)
+            for (int j = 0; j < height; j++)
+                isWall[i][j] = false;
+        for (int i = 0; i < width; i++){
+            isWall[i][0] = true;
+            isWall[i][height - 1] = true;
+        }
+        for (int i = 0; i < height; i++) {
+            isWall[0][i] = true;
+            isWall[width - 1][i] = true;
+        }
         part = Math.min(part, 10);
-        length = Math.min(length, Math.min(height / 5, width / 5));
+        length = Math.min(length, Math.min(height / 4, width / 4));
         int countOfWalls = (int)((width - 1) * (height - 1) * part / 100);
         while (countOfWalls > 0){
             int currentLength = random.nextInt(length + 1);
@@ -65,24 +111,17 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
     private void generatePartOfMap(boolean[][] isWall, int currentLength) {
         int width = isWall.length;
         int height = isWall[0].length;
+        Direction direction = Direction.values()[random.nextInt(4)];
         GamePoint position = generateRandomPosition(width, height);
-        for (int i = 0; i < currentLength; i++) {
+        for (int i = 0; i < currentLength && inRange(position, width, height); i++) {
             isWall[position.x][position.y] = true;
-            position = getRandomNextPosition(position, width, height);
+            position = position.translated(direction);
         }
     }
 
     private boolean inRange(GamePoint position, int width, int height){
         return 0 < position.x && position.x < width - 1 &&
                 0 < position.y && position.y < height - 1;
-    }
-
-    private GamePoint getRandomNextPosition(GamePoint position, int width, int height){
-        GamePoint nextPosition;
-        do {
-            nextPosition = position.translated(Direction.values()[random.nextInt(4)]);
-        } while (!inRange(nextPosition, width, height));
-        return nextPosition;
     }
 
     private GamePoint generateRandomPosition(int width, int height){
