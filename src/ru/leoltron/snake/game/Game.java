@@ -16,11 +16,15 @@ import java.util.Map;
 
 public class Game {
 
+    public static final int TEMP_PAUSE_TIME_TICKS = 3;
     @Getter
     private int time;
 
     @Getter
     private boolean isPaused;
+
+    @Getter
+    private int tempPauseTime = 0;
 
     private final GameController gameController;
     private GameField gameField;
@@ -41,10 +45,16 @@ public class Game {
     public void tick() {
         if (isGameOver()) return;
 
-        if (!isPaused) {
-            val movedObjects = moveFieldObjects();
-            for (val entry : movedObjects)
-                gameField.addEntity(entry.getItem1(), entry.getItem2());
+        if (gameController.isTempPaused()) {
+            tempPauseTime = TEMP_PAUSE_TIME_TICKS;
+            gameController.setTempUnpaused();
+        } else if (tempPauseTime > 0) {
+            tempPauseTime--;
+            return;
+        } else if (!isPaused) {
+//            val movedObjects = moveFieldObjects();
+//            for (val entry : movedObjects)
+//                gameField.addEntity(entry.getItem1(), entry.getItem2());
             gameController.tick();
         }
         time++;

@@ -3,19 +3,16 @@ package ru.leoltron.snaketests;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
-import ru.leoltron.snake.algorithms.Algorithms;
-import ru.leoltron.snake.algorithms.graph.Edge;
-import ru.leoltron.snake.algorithms.graph.SimpleEdge;
-import ru.leoltron.snake.algorithms.graph.SimpleGraph;
-import ru.leoltron.snake.algorithms.graph.Vertex;
-import ru.leoltron.snake.util.Pair;
+import ru.leoltron.snake.util.algorithms.Algorithms;
+import ru.leoltron.snake.util.algorithms.graph.SimpleEdge;
+import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
+import ru.leoltron.snake.util.algorithms.graph.Vertex;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class AlgorithmsTest {
     private ArrayList<Vertex> vertices = new ArrayList<>();

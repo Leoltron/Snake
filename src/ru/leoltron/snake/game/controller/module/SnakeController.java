@@ -65,7 +65,7 @@ public class SnakeController {
     }
 
     private int getSnakeSize() {
-        return body.size();
+        return body == null ? 0 : body.size();
     }
 
     public void onAppleEaten() {

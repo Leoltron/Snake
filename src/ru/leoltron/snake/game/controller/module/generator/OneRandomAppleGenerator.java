@@ -4,7 +4,7 @@ import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.Apple;
 
 public class OneRandomAppleGenerator implements AppleGenerator {
-    private Apple apple;
+    protected Apple apple;
 
     @Override
     public void onStartNewGame(GameField field) {
@@ -15,6 +15,10 @@ public class OneRandomAppleGenerator implements AppleGenerator {
     @Override
     public void tick(GameField field) {
         if (apple == null || apple.isDead())
-            field.addEntity(field.getRandomFreeLocation(), apple = new Apple());
+            addNewApple(field);
+    }
+
+    protected void addNewApple(GameField field) {
+        field.addEntity(field.getRandomFreeLocation(), apple = new Apple());
     }
 }

@@ -2,14 +2,13 @@ package ru.leoltron.snake.game.controller.module.generator;
 
 
 import lombok.val;
-import ru.leoltron.snake.algorithms.Algorithms;
-import ru.leoltron.snake.algorithms.graph.SimpleEdge;
-import ru.leoltron.snake.algorithms.graph.SimpleGraph;
-import ru.leoltron.snake.algorithms.graph.Vertex;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.util.GamePoint;
+import ru.leoltron.snake.util.algorithms.Algorithms;
+import ru.leoltron.snake.util.algorithms.graph.SimpleEdge;
+import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
+import ru.leoltron.snake.util.algorithms.graph.Vertex;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,27 +20,30 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
     private int length;
     private int part;
 
-    public RandomGameFieldGenerator(){
-        length = 6;
-        part = 10;
+    public RandomGameFieldGenerator() {
+        this(6, 10);
     }
 
-    public RandomGameFieldGenerator(int length, int part){
+    private RandomGameFieldGenerator(int length, int part) {
         this.length = length;
-        part = Math.min(part, 10);
-        part = Math.max(part, 0);
-        this.part = part;
+        this.part = setInBounds(part, 0, 10);
+    }
+
+    private static int setInBounds(int value, int min, int max) {
+        if (min > max)
+            throw new IllegalArgumentException(String.format("max (%d) must be more or equal than min (%d)!", max, min));
+        return Math.max(Math.min(value, max), min);
     }
 
     @Override
     public Map<GamePoint, FieldObject> generateFieldObjects(int fieldWidth, int fieldHeight) {
-            return generateFieldObjects(fieldWidth, fieldHeight, this.length, this.part);
+        return generateFieldObjects(fieldWidth, fieldHeight, this.length, this.part);
     }
 
-    protected Map<GamePoint, FieldObject> generateFieldObjects(int fieldWidth, int fieldHeight, int length, int part){
+    private Map<GamePoint, FieldObject> generateFieldObjects(int fieldWidth, int fieldHeight, int length, int part) {
         boolean[][] isWall;
         val objects = new HashMap<GamePoint, FieldObject>();
-        do{
+        do {
             isWall = generateRandomMap(fieldWidth, fieldHeight, length, part);
         } while (!canBeMap(isWall));
         for (int i = 0; i < fieldWidth; i++) {
@@ -64,7 +66,7 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
         val vertexFromGamePoint = new HashMap<GamePoint, Vertex>();
         int width = isWall.length;
         int height = isWall[0].length;
-        for (int i = 0; i < width; i++){
+        for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (isWall[i][j]) continue;
                 val current = new GamePoint(i, j);
@@ -73,7 +75,7 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
                 graph.getVertices().add(currentVertex);
             }
         }
-        for (int i = 0; i < width; i++){
+        for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (isWall[i][j]) continue;
                 val currentPosition = new GamePoint(i, j);
@@ -90,12 +92,12 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
         return graph;
     }
 
-    private boolean[][] generateRandomMap(int width, int height, int length, double part){
+    private boolean[][] generateRandomMap(int width, int height, int length, double part) {
         boolean[][] isWall = new boolean[width][height];
         for (int i = 0; i < width; i++)
             for (int j = 0; j < height; j++)
                 isWall[i][j] = false;
-        for (int i = 0; i < width; i++){
+        for (int i = 0; i < width; i++) {
             isWall[i][0] = true;
             isWall[i][height - 1] = true;
         }
@@ -104,8 +106,8 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
             isWall[width - 1][i] = true;
         }
         length = Math.min(length, Math.min(height / 4, width / 4));
-        int countOfWalls = (int)((width - 1) * (height - 1) * part / 100);
-        while (countOfWalls > 0){
+        int countOfWalls = (int) ((width - 1) * (height - 1) * part / 100);
+        while (countOfWalls > 0) {
             int currentLength = random.nextInt(length + 1);
             generatePartOfMap(isWall, currentLength);
             countOfWalls -= currentLength;
@@ -125,12 +127,12 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
         }
     }
 
-    private boolean inRange(GamePoint position, int width, int height){
+    private boolean inRange(GamePoint position, int width, int height) {
         return 0 < position.x && position.x < width - 1 &&
                 0 < position.y && position.y < height - 1;
     }
 
-    private GamePoint generateRandomPosition(int width, int height){
+    private GamePoint generateRandomPosition(int width, int height) {
         return new GamePoint(random.nextInt(width), random.nextInt(height));
     }
 }

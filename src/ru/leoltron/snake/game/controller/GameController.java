@@ -11,4 +11,8 @@ public interface GameController {
     void setCurrentDirection(Direction direction);
 
     boolean isSnakeDead();
+
+    boolean isTempPaused();
+
+    void setTempUnpaused();
 }

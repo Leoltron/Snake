@@ -1,11 +1,10 @@
-package ru.leoltron.snake.algorithms;
+package ru.leoltron.snake.util.algorithms;
 
 import lombok.val;
-import ru.leoltron.snake.algorithms.graph.Edge;
-import ru.leoltron.snake.algorithms.graph.SimpleGraph;
-import ru.leoltron.snake.algorithms.graph.Vertex;
+import ru.leoltron.snake.util.algorithms.graph.Edge;
+import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
+import ru.leoltron.snake.util.algorithms.graph.Vertex;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 

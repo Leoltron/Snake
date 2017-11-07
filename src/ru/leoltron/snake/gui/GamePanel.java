@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 public class GamePanel extends JPanel {
 
+    public static final Color BG_COLOR = Color.WHITE;
     private final double scale;
     private int width;
     private int height;
@@ -38,6 +39,14 @@ public class GamePanel extends JPanel {
         this.scale = scale;
         registerDrawers();
         checkDrawersForAllFieldObjects();
+    }
+
+    private static void drawCenteredString(Graphics g, String text, int centerX, int centerY, Font font) {
+        val metrics = g.getFontMetrics(font);
+        int x = centerX - metrics.stringWidth(text) / 2;
+        int y = (centerY - metrics.getHeight() / 2) + metrics.getAscent();
+        g.setFont(font);
+        g.drawString(text, x, y);
     }
 
     private void checkDrawersForAllFieldObjects() {
@@ -67,13 +76,21 @@ public class GamePanel extends JPanel {
 
     @Override
     public void paint(Graphics graphics) {
+        drawBackground(graphics);
         if (drawGrid)
             drawGrid(graphics);
         drawFieldObjects(graphics);
         if (game.isGameOver())
             drawGameOverString(graphics);
+        else if (game.getTempPauseTime() > 0)
+            drawPausedTimeString(graphics, game.getTempPauseTime());
         else if (game.isPaused())
             drawPausedString(graphics);
+    }
+
+    private void drawBackground(Graphics graphics) {
+        graphics.setColor(BG_COLOR);
+        graphics.fillRect(0, 0, this.getSize().width, this.getSize().height);
     }
 
     private void drawFieldObjects(Graphics graphics) {
@@ -96,7 +113,15 @@ public class GamePanel extends JPanel {
                 getFont().deriveFont(32f));
     }
 
+    private void drawPausedTimeString(Graphics graphics, int time) {
+        graphics.setColor(Color.BLUE);
+        drawCenteredString(graphics, String.valueOf(time),
+                getWidth() / 2, getHeight() / 2,
+                getFont().deriveFont(64f));
+    }
+
     private void drawGrid(Graphics graphics) {
+        graphics.setColor(Color.BLACK);
         int lineX;
         int lineY = (int) (height * (64 * scale));
         for (int x = 0; x <= width; x++) {
@@ -124,13 +149,5 @@ public class GamePanel extends JPanel {
                 fieldObjX * img.getWidth(null),
                 fieldObjY * img.getHeight(null),
                 null);
-    }
-
-    private static void drawCenteredString(Graphics g, String text, int centerX, int centerY, Font font) {
-        val metrics = g.getFontMetrics(font);
-        int x = centerX - metrics.stringWidth(text) / 2;
-        int y = (centerY - metrics.getHeight() / 2) + metrics.getAscent();
-        g.setFont(font);
-        g.drawString(text, x, y);
     }
 }

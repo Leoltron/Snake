@@ -57,7 +57,7 @@ public class GameField {
         return freeLocations.get(rand.nextInt(freeLocations.size()));
     }
 
-    private List<GamePoint> getAllFreeLocations() {
+    public List<GamePoint> getAllFreeLocations() {
         val locations = new ArrayList<GamePoint>();
         for (int x = 0; x < fieldWidth; x++)
             for (int y = 0; y < fieldHeight; y++)

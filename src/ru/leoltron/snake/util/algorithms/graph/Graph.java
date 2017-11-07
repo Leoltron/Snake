@@ -1,4 +1,4 @@
-package ru.leoltron.snake.algorithms.graph;
+package ru.leoltron.snake.util.algorithms.graph;
 
 import java.util.HashSet;
 

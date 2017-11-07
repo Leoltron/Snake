@@ -13,12 +13,19 @@ public class SingleLevelGameController implements GameController {
 
     private GameField gameField;
 
+    private boolean isStartGamePauseActive = false;
+
     public SingleLevelGameController(@NonNull AppleGenerator appleGenerator,
                                      @NonNull GameFieldGenerator gameFieldGenerator,
                                      @NonNull SnakeController snakeController) {
         this.appleGenerator = appleGenerator;
         this.gameFieldGenerator = gameFieldGenerator;
         this.snakeController = snakeController;
+    }
+
+    public SingleLevelGameController setStartGamePauseActive() {
+        isStartGamePauseActive = true;
+        return this;
     }
 
     @Override
@@ -44,6 +51,16 @@ public class SingleLevelGameController implements GameController {
     @Override
     public boolean isSnakeDead() {
         return snakeController.isSnakeDead(gameField);
+    }
+
+    @Override
+    public boolean isTempPaused() {
+        return isStartGamePauseActive;
+    }
+
+    @Override
+    public void setTempUnpaused() {
+        isStartGamePauseActive = false;
     }
 
 
