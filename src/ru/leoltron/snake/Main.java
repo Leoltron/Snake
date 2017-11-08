@@ -47,18 +47,6 @@ public class Main {
         val panelHeight = (int) (fieldHeight * 64 * scale);
 
         val game = new Game(new MultiLevelGameController(), fieldWidth, fieldHeight);
-        /* val game = new Game(getPredefinedLevelGameController("" +
-                "WWWWWWWWWW\n" +
-                "W     W  W\n" +
-                "W  W  W  W\n" +
-                "W  W  W  W\n" +
-                "W  W  W  W\n" +
-                "W  W  W  W\n" +
-                "W  W  W  W\n" +
-                "W  W  W  W\n" +
-                "W  W     W\n" +
-                "WWWWWWWWWW\n"
-        ), fieldWidth, fieldHeight);*/
         game.startNewGame();
         val gui = new GamePanel(fieldWidth, fieldHeight, game, scale);
         val frame = new JFrame();
@@ -72,6 +60,10 @@ public class Main {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_G)
                     gui.switchGridDrawMode();
+                else if (e.getKeyCode() == KeyEvent.VK_SPACE){
+
+                    tickGameAndUpdate(game, frame);
+                }
             }
 
             @Override
@@ -81,12 +73,16 @@ public class Main {
         });
 
         setFrame(frame, gui, panelWidth, panelHeight, new GameKeyListener(game));
-        val period = 100;
+        val period = 300;
         val timer = new Timer(period, actionEvent -> {
-            game.tick();
-            SwingUtilities.updateComponentTreeUI(frame);
+            tickGameAndUpdate(game, frame);
         });
         timer.start();
 
+    }
+
+    private static void tickGameAndUpdate(Game game, JFrame frame) {
+        game.tick();
+        SwingUtilities.updateComponentTreeUI(frame);
     }
 }
