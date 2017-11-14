@@ -66,21 +66,21 @@ public class SingleLevelGameController implements GameController {
 
     public static SingleLevelGameController getClassicGameController() {
         return new SingleLevelGameController(
-                new OneRandomAppleGenerator(),
+                new RandomApplesGenerator(),
                 new BorderGameFieldGenerator(),
                 new SnakeController());
     }
 
     public static SingleLevelGameController getPredefinedLevelGameController(String level) {
         return new SingleLevelGameController(
-                new OneRandomAppleGenerator(),
+                new RandomApplesGenerator(),
                 new PredefinedFieldGenerator(level),
                 new SnakeController());
     }
 
     public static SingleLevelGameController getPredefinedLevelGameController(String[] level) {
         return new SingleLevelGameController(
-                new OneRandomAppleGenerator(),
+                new RandomApplesGenerator(),
                 new PredefinedFieldGenerator(level),
                 new SnakeController());
     }

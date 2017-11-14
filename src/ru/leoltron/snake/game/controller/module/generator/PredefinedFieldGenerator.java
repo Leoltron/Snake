@@ -7,6 +7,9 @@ import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.Wall;
 import ru.leoltron.snake.util.GamePoint;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,5 +71,9 @@ public class PredefinedFieldGenerator extends GameFieldGenerator {
     private void copyFieldObjectsTo(HashMap<GamePoint, FieldObject> map) {
         for (val entry : fieldObjects.entrySet())
             map.put(entry.getKey(), entry.getValue().clone());
+    }
+
+    public static PredefinedFieldGenerator fromFile(String path) throws IOException {
+        return new PredefinedFieldGenerator(Files.readAllLines(Paths.get(path)).toArray(new String[0]));
     }
 }

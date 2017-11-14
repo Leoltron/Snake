@@ -6,75 +6,12 @@ import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.controller.module.SnakeController;
 import ru.leoltron.snake.game.controller.module.generator.*;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class MultiLevelGameController implements GameController {
     private static final int APPLES_REQUIRED_TO_EAT_BEFORE_NEXT_LEVEL = 4;
-    private static final String[] PRE_MADE_LEVELS = {
-            "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W       W      WWWWWW W       W WWWWWW W             W         W\n" +
-                    "W       W      W      W       W W      W            WW         W\n" +
-                    "W       W      W       W     W  W      W           WWW         W\n" +
-                    "W       W      W       W     W  W      W             W         W\n" +
-                    "W       W      WWWWW    W   W   WWWWW  W             W         W\n" +
-                    "W       W      W        W   W   W      W             W         W\n" +
-                    "W       W      W         WWW    W      W             W         W\n" +
-                    "W       W      W         WWW    W      W             W         W\n" +
-                    "W       W      W          W     W      W             W         W\n" +
-                    "W       WWWWWW WWWWWW     W     WWWWWW WWWWWW      WWWWW       W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n",
-            "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n" +
-                    "W                                                              W\n" +
-                    "W                        WWWWWWWWWWWWWW      WWWWWWWW          W\n" +
-                    "W  WWWWWWW               W            W      W      W          W\n" +
-                    "W  W     W               W            W      W      W          W\n" +
-                    "W  W     W               W            W      W      W     W    W\n" +
-                    "W  W     W               W            W      W      W     W    W\n" +
-                    "W  W     W               W     W      W      W      W     W    W\n" +
-                    "W  W     W       WWWWWWW W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W  W     W       W       W     W      W      W      W     W    W\n" +
-                    "W        W       W       W     W      W      W      W     W    W\n" +
-                    "W        W       W       W     W      W      W      W     W    W\n" +
-                    "W        W               W     W      W      W      W     W    W\n" +
-                    "W        WWWWWWWWWWWWWWWWW     W      W      W      W     W    W\n" +
-                    "W        W       W             W             W      W     W    W\n" +
-                    "W                W             W             W      W     W    W\n" +
-                    "W                W             W             W      W     W    W\n" +
-                    "W                W             W             W      W     W    W\n" +
-                    "W                W             W             W      W     W    W\n" +
-                    "W                W             WWWWWWWWWWWWWWW      WWWWW W    W\n" +
-                    "W                W                                             W\n" +
-                    "W                W                                             W\n" +
-                    "W                                                              W\n" +
-                    "W                                                              W\n" +
-                    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n",};
+
     private final Random rand = new Random();
     private int level;
     private int appleEaten;
@@ -84,17 +21,17 @@ public class MultiLevelGameController implements GameController {
     private boolean isStartLevelPauseActive = true;
 
     public MultiLevelGameController() {
-        appleGenerator = new OneRandomAppleGenerator() {
+        appleGenerator = new RandomApplesGenerator();
+        snakeController = new SnakeController() {
             @Override
-            protected void addNewApple(GameField field) {
-                if (this.apple != null)
-                    appleEaten++;
-                super.addNewApple(field);
+            public void onAppleEaten() {
+                super.onAppleEaten();
+
+                appleEaten++;
                 if (appleEaten >= APPLES_REQUIRED_TO_EAT_BEFORE_NEXT_LEVEL)
                     moveToNextLevel();
             }
         };
-        snakeController = new SnakeController();
     }
 
     @Override
@@ -115,8 +52,13 @@ public class MultiLevelGameController implements GameController {
         level++;
         appleEaten = 0;
         GameFieldGenerator generator;
-        if (level < PRE_MADE_LEVELS.length)
-            generator = new PredefinedFieldGenerator(PRE_MADE_LEVELS[level]);
+        if (level < 2)
+            try {
+                generator = PredefinedFieldGenerator.fromFile("resources/levels/level" + (level + 1) + ".txt");
+            } catch (IOException e) {
+                e.printStackTrace();
+                generator = new RandomGameFieldGenerator();
+            }
         else
             generator = new RandomGameFieldGenerator();
         generator.generateFieldObjects(field);
