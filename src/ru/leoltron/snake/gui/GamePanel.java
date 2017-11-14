@@ -3,6 +3,7 @@ package ru.leoltron.snake.gui;
 import lombok.val;
 import org.reflections.Reflections;
 import ru.leoltron.snake.game.Game;
+import ru.leoltron.snake.game.controller.MultiLevelGameController;
 import ru.leoltron.snake.game.entity.Apple;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.SnakePart;
@@ -80,12 +81,24 @@ public class GamePanel extends JPanel {
         if (drawGrid)
             drawGrid(graphics);
         drawFieldObjects(graphics);
+
+        drawStateStrings(graphics);
+    }
+
+    private void drawStateStrings(Graphics graphics) {
         if (game.isGameOver())
             drawGameOverString(graphics);
         else if (game.getTempPauseTime() > 0)
             drawPausedTimeString(graphics, game.getTempPauseTime());
         else if (game.isPaused())
             drawPausedString(graphics);
+
+        if (game.gameController instanceof MultiLevelGameController) {
+            int levelNumber = ((MultiLevelGameController) game.gameController).getLevelNumber();
+            graphics.setColor(Color.BLACK);
+            graphics.setFont(getFont().deriveFont(32f));
+            graphics.drawString("Level " + levelNumber, 0, getSize().height);
+        }
     }
 
     private void drawBackground(Graphics graphics) {

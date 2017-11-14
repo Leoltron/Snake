@@ -24,9 +24,9 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
         this(8, 15);
     }
 
-    private RandomGameFieldGenerator(int length, int part) {
+    public RandomGameFieldGenerator(int length, int wallPart) {
         this.length = length;
-        this.part = setInBounds(part, 0, 15);
+        this.part = setInBounds(wallPart, 0, 15);
     }
 
     private static int setInBounds(int value, int min, int max) {

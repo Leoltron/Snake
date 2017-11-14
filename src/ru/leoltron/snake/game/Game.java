@@ -26,7 +26,7 @@ public class Game {
     @Getter
     private int tempPauseTime = 0;
 
-    private final GameController gameController;
+    public final GameController gameController;
     private GameField gameField;
 
     public Game(@NonNull GameController gameController,
