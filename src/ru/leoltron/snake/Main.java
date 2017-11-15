@@ -60,9 +60,20 @@ public class Main {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_G)
                     gui.switchGridDrawMode();
-                else if (e.getKeyCode() == KeyEvent.VK_SPACE){
-
-                    tickGameAndUpdate(game, frame);
+                else if (e.getKeyCode() == KeyEvent.VK_SPACE)
+                    tickGameAndUpdate(game, frame, true);
+                else if (e.isControlDown()) {
+                    switch (e.getKeyCode()) {
+                        case KeyEvent.VK_A:
+                            game.goToPrevLevel();
+                            break;
+                        case KeyEvent.VK_D:
+                            game.goToNextLevel();
+                            break;
+                        case KeyEvent.VK_L:
+                            game.restartLevel();
+                            break;
+                    }
                 }
             }
 
@@ -74,15 +85,13 @@ public class Main {
 
         setFrame(frame, gui, panelWidth, panelHeight, new GameKeyListener(game));
         val period = 300;
-        val timer = new Timer(period, actionEvent -> {
-            tickGameAndUpdate(game, frame);
-        });
+        val timer = new Timer(period, actionEvent -> tickGameAndUpdate(game, frame, false));
         timer.start();
 
     }
 
-    private static void tickGameAndUpdate(Game game, JFrame frame) {
-        game.tick();
+    private static void tickGameAndUpdate(Game game, JFrame frame, boolean forceTick) {
+        game.tick(forceTick);
         SwingUtilities.updateComponentTreeUI(frame);
     }
 }

@@ -94,11 +94,22 @@ public class GamePanel extends JPanel {
             drawPausedString(graphics);
 
         if (game.gameController instanceof MultiLevelGameController) {
-            int levelNumber = ((MultiLevelGameController) game.gameController).getLevelNumber();
+            val multiLevelGameController = (MultiLevelGameController) game.gameController;
+            drawLevelNumber(graphics, multiLevelGameController.getLevelNumber());
+
+            val s = String.format("Apples left: %d", multiLevelGameController.getApplesLeftToEat());
+            val font = getFont().deriveFont(32f);
+            val metrics = graphics.getFontMetrics(font);
             graphics.setColor(Color.BLACK);
-            graphics.setFont(getFont().deriveFont(32f));
-            graphics.drawString("Level " + levelNumber, 0, getSize().height);
+            graphics.setFont(font);
+            graphics.drawString(s, getSize().width - 2 - metrics.stringWidth(s), getSize().height - 2);
         }
+    }
+
+    private void drawLevelNumber(Graphics graphics, int levelNumber) {
+        graphics.setColor(Color.BLACK);
+        graphics.setFont(getFont().deriveFont(32f));
+        graphics.drawString("Level " + levelNumber, 0, getSize().height - 2);
     }
 
     private void drawBackground(Graphics graphics) {

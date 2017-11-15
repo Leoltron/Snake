@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import ru.leoltron.snake.game.controller.GameController;
+import ru.leoltron.snake.game.controller.MultiLevelGameController;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.FieldObjectMoving;
 import ru.leoltron.snake.util.GamePoint;
@@ -42,14 +43,43 @@ public class Game {
         isPaused = false;
     }
 
+    public void restartLevel() {
+        if (this.gameController instanceof MultiLevelGameController) {
+            val mlGameController = (MultiLevelGameController) this.gameController;
+            mlGameController.moveToLevel(mlGameController.getLevelNumber());
+        } else
+            startNewGame();
+    }
+
+    public void goToNextLevel() {
+        if (this.gameController instanceof MultiLevelGameController) {
+            val mlGameController = (MultiLevelGameController) this.gameController;
+            mlGameController.moveToLevel(mlGameController.getLevelNumber() + 1);
+        } else
+            startNewGame();
+    }
+
+    public void goToPrevLevel() {
+        if (this.gameController instanceof MultiLevelGameController) {
+            val mlGameController = (MultiLevelGameController) this.gameController;
+            mlGameController.moveToLevel(mlGameController.getLevelNumber() - 1);
+        } else
+            startNewGame();
+    }
+
     public void tick() {
+        tick(true);
+    }
+
+    public void tick(boolean forced) {
         if (isGameOver()) return;
 
         if (gameController.isTempPaused()) {
             tempPauseTime = TEMP_PAUSE_TIME_TICKS;
             gameController.setTempUnpaused();
         } else if (tempPauseTime > 0) {
-            tempPauseTime--;
+            if (!forced)
+                tempPauseTime--;
             return;
         } else if (!isPaused) {
 //            val movedObjects = moveFieldObjects();

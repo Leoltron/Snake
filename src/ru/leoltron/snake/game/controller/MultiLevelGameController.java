@@ -23,7 +23,7 @@ public class MultiLevelGameController implements GameController {
     private final Random rand = new Random();
     @Getter
     private int levelNumber;
-    private int appleEaten;
+    private int applesEaten;
     private GameField field;
     private AppleGenerator appleGenerator;
     private SnakeController snakeController;
@@ -38,8 +38,8 @@ public class MultiLevelGameController implements GameController {
             public void onAppleEaten() {
                 super.onAppleEaten();
 
-                appleEaten++;
-                if (appleEaten >= applesRequiredForLevel)
+                applesEaten++;
+                if (applesEaten >= applesRequiredForLevel)
                     moveToNextLevel();
             }
         };
@@ -76,10 +76,15 @@ public class MultiLevelGameController implements GameController {
         moveToNextLevel();
     }
 
+    public void moveToLevel(int level) {
+        levelNumber = level - 1;
+        moveToNextLevel();
+    }
+
     private void moveToNextLevel() {
         isStartLevelPauseActive = true;
         levelNumber++;
-        appleEaten = 0;
+        applesEaten = 0;
         startLevel();
         respawnSnakeAtRandomLocation();
     }
@@ -126,5 +131,9 @@ public class MultiLevelGameController implements GameController {
     @Override
     public void setTempUnpaused() {
         isStartLevelPauseActive = false;
+    }
+
+    public int getApplesLeftToEat() {
+        return applesRequiredForLevel - applesEaten;
     }
 }
