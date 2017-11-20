@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.GameField;
+import ru.leoltron.snake.game.entity.Edible;
 import ru.leoltron.snake.game.entity.SnakePart;
 import ru.leoltron.snake.util.GamePoint;
 
@@ -68,8 +69,8 @@ public class SnakeController {
         return body == null ? 0 : body.size();
     }
 
-    public void onAppleEaten() {
-        snakePartsGoingToAdd++;
+    public void onFoodEaten(Edible edible) {
+        snakePartsGoingToAdd += edible.getFoodValue();
     }
 
     public void tick(GameField field) {

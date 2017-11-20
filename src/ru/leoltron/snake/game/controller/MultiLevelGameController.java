@@ -11,6 +11,7 @@ import ru.leoltron.snake.game.controller.module.generator.AppleGenerator;
 import ru.leoltron.snake.game.controller.module.generator.PredefinedFieldGenerator;
 import ru.leoltron.snake.game.controller.module.generator.RandomApplesGenerator;
 import ru.leoltron.snake.game.controller.module.generator.RandomGameFieldGenerator;
+import ru.leoltron.snake.game.entity.Edible;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,10 +36,10 @@ public class MultiLevelGameController implements GameController {
     public MultiLevelGameController() {
         snakeController = new SnakeController() {
             @Override
-            public void onAppleEaten() {
-                super.onAppleEaten();
+            public void onFoodEaten(Edible edible) {
+                super.onFoodEaten(edible);
 
-                applesEaten++;
+                applesEaten += edible.getFoodValue();
                 if (applesEaten >= applesRequiredForLevel)
                     moveToNextLevel();
             }

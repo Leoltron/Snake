@@ -31,8 +31,8 @@ public class SnakePart extends FieldObject {
 
     @Override
     public void onCollisionWith(FieldObject object) {
-        if (object instanceof Apple)
-            snakeController.onAppleEaten();
+        if (object instanceof Edible)
+            snakeController.onFoodEaten((Edible) object);
         else
             setDead();
     }

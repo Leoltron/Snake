@@ -1,6 +1,6 @@
 package ru.leoltron.snake.game.entity;
 
-public class Apple extends FieldObject {
+public class Apple extends FieldObject implements Edible {
 
     @Override
     public void onCollisionWith(FieldObject object) {
@@ -10,5 +10,10 @@ public class Apple extends FieldObject {
     @Override
     public FieldObject clone() {
         return new Apple();
+    }
+
+    @Override
+    public int getFoodValue() {
+        return 1;
     }
 }

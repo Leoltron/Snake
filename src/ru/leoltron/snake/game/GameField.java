@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import ru.leoltron.snake.game.entity.FieldObject;
+import ru.leoltron.snake.game.entity.LivingFieldObject;
 import ru.leoltron.snake.util.GamePoint;
+import ru.leoltron.snake.util.Pair;
 
 import java.awt.*;
 import java.util.*;
@@ -19,6 +21,7 @@ public class GameField {
     @Getter
     private int fieldHeight;
     private Map<GamePoint, FieldObject> fieldObjects = new HashMap<>();
+    private Map<GamePoint, LivingFieldObject> livingFieldObjects = new HashMap<>();
 
     public GameField(int fieldWidth, int fieldHeight) {
         this.fieldWidth = fieldWidth;
@@ -71,15 +74,18 @@ public class GameField {
     }
 
     public void addEntity(GamePoint coords, FieldObject object) {
-        if (new Rectangle(0, 0, fieldWidth, fieldHeight).contains(coords))
+        if (new Rectangle(0, 0, fieldWidth, fieldHeight).contains(coords)) {
             fieldObjects.merge(coords, object, GameField::resolveCollision);
-        else
+            if (!object.isDead() && object instanceof LivingFieldObject)
+                livingFieldObjects.put(coords, (LivingFieldObject) object);
+        } else
             throw new IndexOutOfBoundsException(String.format("Coords (%d, %d) are out of bounds of the field " +
                     "(width: %d, height:%d)", coords.x, coords.y, fieldWidth, fieldHeight));
     }
 
     @SuppressWarnings("UnusedReturnValue")
     public FieldObject removeEntityAt(GamePoint point) {
+        livingFieldObjects.remove(point);
         return fieldObjects.remove(point);
     }
 
@@ -88,7 +94,26 @@ public class GameField {
         return fieldObjects.entrySet();
     }
 
+    public Collection<Map.Entry<GamePoint, LivingFieldObject>> getLivingFieldObjects() {
+        return livingFieldObjects.entrySet();
+    }
+
     public void clear() {
         fieldObjects.clear();
+        livingFieldObjects.clear();
+    }
+
+    public Collection<Pair<GamePoint, FieldObject>> getNeighborhood(GamePoint centerPoint, int radius, boolean includeCenter) {
+        val result = new ArrayList<Pair<GamePoint, FieldObject>>();
+        val centerX = centerPoint.x;
+        val centerY = centerPoint.y;
+        for (int x = centerX - radius; x <= centerX + radius; x++)
+            for (int y = centerY - radius; y <= centerY + radius; y++) {
+                val point = new GamePoint(x, y);
+                val obj = getObjectAt(point);
+                if (obj != null && !(x == centerX && y == centerY && !includeCenter))
+                    result.add(Pair.create(point, obj));
+            }
+        return result;
     }
 }

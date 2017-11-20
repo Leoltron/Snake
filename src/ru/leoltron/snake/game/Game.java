@@ -7,13 +7,11 @@ import ru.leoltron.snake.game.controller.GameController;
 import ru.leoltron.snake.game.controller.MultiLevelGameController;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.FieldObjectMoving;
+import ru.leoltron.snake.game.entity.LivingFieldObject;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
 
@@ -82,6 +80,9 @@ public class Game {
                 tempPauseTime--;
             return;
         } else if (!isPaused) {
+            Collection<Map.Entry<GamePoint, LivingFieldObject>> entries = gameField.getLivingFieldObjects();
+            for (val entry : entries)
+                entry.getValue().tick(gameField, entry.getKey());
 //            val movedObjects = moveFieldObjects();
 //            for (val entry : movedObjects)
 //                gameField.addEntity(entry.getItem1(), entry.getItem2());

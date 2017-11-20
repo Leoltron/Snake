@@ -112,18 +112,15 @@ public class GameFieldTests extends Assert {
 
     @Test(expected = CollisionException.class)
     public void testCollision() {
-        field.addEntity(new GamePoint(4, 5), new Wall() {
-            @Override
-            public void onCollisionWith(FieldObject object) {
+        field.addEntity(new GamePoint(4, 5), new IgnorantWall());
+        field.addEntity(new GamePoint(4, 5), new IgnorantWall());
+    }
 
-            }
-        });
-        field.addEntity(new GamePoint(4, 5), new Wall() {
-            @Override
-            public void onCollisionWith(FieldObject object) {
+    private class IgnorantWall extends Wall {
+        @Override
+        public void onCollisionWith(FieldObject object) {
 
-            }
-        });
+        }
     }
 
     @Test
