@@ -81,8 +81,12 @@ public class Game {
             return;
         } else if (!isPaused) {
             Collection<Map.Entry<GamePoint, LivingFieldObject>> entries = gameField.getLivingFieldObjects();
+            val pairs = new ArrayList<Pair<GamePoint, LivingFieldObject>>(entries.size());
             for (val entry : entries)
-                entry.getValue().tick(gameField, entry.getKey());
+                pairs.add(Pair.create(entry.getKey(), entry.getValue()));
+
+            for (val pair : pairs)
+                pair.getItem2().tick(gameField, pair.getItem1());
 //            val movedObjects = moveFieldObjects();
 //            for (val entry : movedObjects)
 //                gameField.addEntity(entry.getItem1(), entry.getItem2());

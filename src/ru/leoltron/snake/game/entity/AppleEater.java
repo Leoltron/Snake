@@ -101,6 +101,6 @@ public class AppleEater extends LivingFieldObject implements Edible {
 
     @Override
     public int getFoodValue() {
-        return applesEaten;
+        return applesEaten + 1;
     }
 }
