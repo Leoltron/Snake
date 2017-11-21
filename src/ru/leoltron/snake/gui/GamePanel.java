@@ -4,10 +4,7 @@ import lombok.val;
 import org.reflections.Reflections;
 import ru.leoltron.snake.game.Game;
 import ru.leoltron.snake.game.controller.MultiLevelGameController;
-import ru.leoltron.snake.game.entity.Apple;
-import ru.leoltron.snake.game.entity.FieldObject;
-import ru.leoltron.snake.game.entity.SnakePart;
-import ru.leoltron.snake.game.entity.Wall;
+import ru.leoltron.snake.game.entity.*;
 import ru.leoltron.snake.gui.drawers.IDrawer;
 import ru.leoltron.snake.gui.drawers.SnakeDrawer;
 import ru.leoltron.snake.gui.drawers.StaticObjectDrawer;
@@ -20,14 +17,14 @@ import java.util.HashMap;
 
 public class GamePanel extends JPanel {
 
-    public static final Color BG_COLOR = Color.WHITE;
+    private static final Color BG_COLOR = Color.WHITE;
     private final double scale;
     private int width;
     private int height;
     private Game game;
     private HashMap<Class, IDrawer> drawers = new HashMap<>();
 
-    private boolean drawGrid = false;
+    private boolean drawGrid;
 
     public GamePanel(int width, int height, Game game) throws IOException {
         this(width, height, game, 1d);
@@ -64,6 +61,7 @@ public class GamePanel extends JPanel {
         drawers.put(Apple.class, new StaticObjectDrawer("resources", "textures", "apple.png"));
         drawers.put(Wall.class, new StaticObjectDrawer("resources", "textures", "brick.png"));
         drawers.put(SnakePart.class, new SnakeDrawer());
+        drawers.put(AppleEater.class, new StaticObjectDrawer("resources", "textures", "pufferfish.png"));
     }
 
     private Image getImageAt(int x, int y) {
@@ -114,7 +112,7 @@ public class GamePanel extends JPanel {
 
     private void drawBackground(Graphics graphics) {
         graphics.setColor(BG_COLOR);
-        graphics.fillRect(0, 0, this.getSize().width, this.getSize().height);
+        graphics.fillRect(0, 0, getSize().width, getSize().height);
     }
 
     private void drawFieldObjects(Graphics graphics) {
