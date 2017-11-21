@@ -3,6 +3,7 @@ package ru.leoltron.snake;
 import lombok.val;
 import ru.leoltron.snake.game.Game;
 import ru.leoltron.snake.game.controller.AdaptedMultiLevelGameController;
+import ru.leoltron.snake.game.controller.SingleLevelGameController;
 import ru.leoltron.snake.gui.GameKeyListener;
 import ru.leoltron.snake.gui.GamePanel;
 

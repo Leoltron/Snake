@@ -24,7 +24,6 @@ public class AdaptedMultiLevelGameController extends MultiLevelGameController {
 
     @Override
     protected void initLevels() {
-
         //Счет уровней начинается с единицы
         setDefaultLevel(new RandomGameFieldGenerator(), new RandomApplesGenerator(3), 2);
         setLevel(1, new BorderGameFieldGenerator(), new RandomApplesGenerator());
