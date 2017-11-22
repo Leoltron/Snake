@@ -14,8 +14,5 @@ public abstract class FieldObject {
         isDead = true;
     }
 
-    public void tick() {
-    }
-
     public abstract FieldObject clone();
 }
