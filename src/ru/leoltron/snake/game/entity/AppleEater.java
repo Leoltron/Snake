@@ -8,7 +8,7 @@ import ru.leoltron.snake.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
+import java.util.List;
 
 public class AppleEater extends LivingFieldObject implements Edible {
 
@@ -27,34 +27,49 @@ public class AppleEater extends LivingFieldObject implements Edible {
         this.applesEaten = applesEaten;
     }
 
+    private static List<Direction> getFreeNeighbours(GameField field, GamePoint location) {
+        ArrayList<Direction> directionsAvailable = new ArrayList<>();
+        for (val nextDirection : Direction.values()) {
+            val nextLocation = location.translated(nextDirection);
+            if (field.isFree(nextLocation))
+                directionsAvailable.add(nextDirection);
+        }
+        return directionsAvailable;
+    }
+
     @Override
-    public void tick(GameField field, GamePoint location) {
-        Direction direction = getOptimalDirection(field, location,
-                field.getNeighborhood(location, VIEW_DISTANCE, false));
+    public void tick(GameField field, GamePoint curLocation) {
+        Direction direction = getOptimalDirection(field, curLocation,
+                field.getNeighborhood(curLocation, VIEW_DISTANCE, false));
         if (direction == null)
             return;
+        curLocation = moveBy(field, curLocation, direction);
+
+        if (applesEaten >= applesRequiredToClone)
+            makeClone(field, curLocation);
+
+    }
+
+    private GamePoint moveBy(GameField field, GamePoint location, Direction direction) {
         field.removeEntityAt(location);
         location = location.translated(direction);
         field.addEntity(location, this);
-        if (applesEaten < applesRequiredToClone)
-            return;
-        ArrayList<Direction> directions = new ArrayList<>();
-        for (val nextDirection: Direction.values()){
-            val nextLocation = location.translated(nextDirection);
-            if (field.isFree(nextLocation))
-                directions.add(nextDirection);
-        }
-        if (directions.isEmpty())
+        return location;
+    }
+
+    private void makeClone(GameField field, GamePoint location) {
+        val directionsAvailable = getFreeNeighbours(field, location);
+        if (directionsAvailable.isEmpty())
             return;
         applesEaten = 0;
-        val nextLocation = location.translated(directions.get(new Random().nextInt(directions.size())));
+        val nextLocation = location.translated(directionsAvailable.get(field.rand.nextInt(directionsAvailable.size())));
         field.addEntity(nextLocation, clone());
     }
 
     private Direction getOptimalDirection(GameField field, GamePoint location,
                                          Collection<Pair<GamePoint, FieldObject>> nearestObjects){
         double optimalCost = -5;
-        ArrayList<Direction> answer = new ArrayList<>();
+        List<Direction> answer = new ArrayList<>();
         for (val direction: Direction.values()){
             double currentCost = getCostOfPoint(field, location.translated(direction), nearestObjects);
             if (currentCost > optimalCost){
@@ -64,15 +79,15 @@ public class AppleEater extends LivingFieldObject implements Edible {
             if (currentCost == optimalCost)
                 answer.add(direction);
         }
-        return answer.get(new Random().nextInt(answer.size()));
+        return answer.get(field.rand.nextInt(answer.size()));
     }
 
     private double getCostOfPoint(GameField field, GamePoint location,
                                   Collection<Pair<GamePoint, FieldObject>> nearestObjects){
         double currentCost = 0;
         val fieldObject = field.getObjectAt(location);
-        if (fieldObject != null && fieldObject.getClass() == Wall.class)
-            return -1000;
+        if (fieldObject != null && fieldObject.getClass() != Apple.class)
+            return -Double.MAX_VALUE;
         for (val object : nearestObjects){
             if (object.getItem2().getClass() == Apple.class)
                 currentCost += 4 - location.euclideanDistanceTo(object.getItem1());

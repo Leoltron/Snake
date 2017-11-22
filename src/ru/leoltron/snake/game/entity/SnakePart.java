@@ -33,8 +33,10 @@ public class SnakePart extends FieldObject {
     public void onCollisionWith(FieldObject object) {
         if (object instanceof Edible)
             snakeController.onFoodEaten((Edible) object);
-        else
+        else {
+            System.out.println("Snake died from collision with " + object.getClass().getName());
             setDead();
+        }
     }
 
     @Override
