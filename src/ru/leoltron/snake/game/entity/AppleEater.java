@@ -8,7 +8,6 @@ import ru.leoltron.snake.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
 public class AppleEater extends LivingFieldObject implements Edible {
 
@@ -47,7 +46,7 @@ public class AppleEater extends LivingFieldObject implements Edible {
         if (directions.isEmpty())
             return;
         applesEaten = 0;
-        val nextLocation = location.translated(directions.get(new Random().nextInt(directions.size())));
+        val nextLocation = location.translated(directions.get(field.rand.nextInt(directions.size())));
         field.addEntity(nextLocation, clone());
     }
 
@@ -64,15 +63,15 @@ public class AppleEater extends LivingFieldObject implements Edible {
             if (currentCost == optimalCost)
                 answer.add(direction);
         }
-        return answer.get(new Random().nextInt(answer.size()));
+        return answer.get(field.rand.nextInt(answer.size()));
     }
 
     private double getCostOfPoint(GameField field, GamePoint location,
                                   Collection<Pair<GamePoint, FieldObject>> nearestObjects){
         double currentCost = 0;
         val fieldObject = field.getObjectAt(location);
-        if (fieldObject != null && fieldObject.getClass() == Wall.class)
-            return -1000;
+        if (fieldObject != null && fieldObject.getClass() != Apple.class)
+            return -Double.MAX_VALUE;
         for (val object : nearestObjects){
             if (object.getItem2().getClass() == Apple.class)
                 currentCost += 4 - location.euclideanDistanceTo(object.getItem1());

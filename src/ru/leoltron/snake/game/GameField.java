@@ -14,7 +14,7 @@ import java.util.List;
 
 public class GameField {
 
-    private final Random rand = new Random();
+    public final Random rand = new Random();
 
     @Getter
     private int fieldWidth;
