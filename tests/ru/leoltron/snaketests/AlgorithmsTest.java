@@ -29,6 +29,11 @@ public class AlgorithmsTest {
     }
 
     @Test
+    public void testCreation() {
+        new Algorithms();
+    }
+
+    @Test
     public void testOneConnectedComponent(){
         SimpleGraph graph = new SimpleGraph();
         addEdge(graph, 0, 1);
