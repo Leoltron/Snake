@@ -3,6 +3,7 @@ package ru.leoltron.snake.game.controller.module.generator;
 import lombok.NonNull;
 import lombok.val;
 import ru.leoltron.snake.game.entity.Apple;
+import ru.leoltron.snake.game.entity.AppleEater;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.Wall;
 import ru.leoltron.snake.util.GamePoint;
@@ -21,6 +22,7 @@ public class PredefinedFieldGenerator extends GameFieldGenerator {
         charsToFieldObjects = new HashMap<>();
         charsToFieldObjects.put('W', new Wall());
         charsToFieldObjects.put('A', new Apple());
+        charsToFieldObjects.put('E', new AppleEater());
     }
 
     private Map<GamePoint, FieldObject> fieldObjects = new HashMap<>();

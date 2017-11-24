@@ -4,6 +4,7 @@ import lombok.val;
 import ru.leoltron.snake.util.algorithms.graph.Edge;
 import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
 import ru.leoltron.snake.util.algorithms.graph.Vertex;
+import sun.misc.Queue;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +32,26 @@ public final class Algorithms {
             components.add(currentComponent);
         }
         return components;
+    }
+
+    public static HashMap<Vertex, Integer> bfs(Vertex start, int maxDistance) throws InterruptedException {
+        val distances = new HashMap<Vertex, Integer>();
+        distances.put(start, 0);
+        Queue<Vertex> queue = new Queue<>();
+        queue.enqueue(start);
+        while (!queue.isEmpty()) {
+            Vertex current = queue.dequeue();
+            int currentDistance = distances.get(current);
+            if (currentDistance == maxDistance)
+                continue;
+            for (val edge : current.getHeighbors()){
+                val to = edge.getTo();
+                if (distances.containsKey(to))
+                    continue;
+                distances.put(to, currentDistance + 1);
+            }
+        }
+        return distances;
     }
 
     private static void findBridges(Vertex current, Vertex parent, HashMap<Vertex, Integer> enterTime,

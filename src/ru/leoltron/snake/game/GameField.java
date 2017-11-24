@@ -14,7 +14,7 @@ import java.util.List;
 
 public class GameField {
 
-    private final Random rand = new Random();
+    public final Random rand = new Random();
 
     @Getter
     private int fieldWidth;
@@ -94,8 +94,12 @@ public class GameField {
         return fieldObjects.entrySet();
     }
 
-    public Collection<Map.Entry<GamePoint, LivingFieldObject>> getLivingFieldObjects() {
-        return livingFieldObjects.entrySet();
+    public Collection<Pair<GamePoint, LivingFieldObject>> getLivingFieldObjects() {
+        val entries = livingFieldObjects.entrySet();
+        val pairs = new ArrayList<Pair<GamePoint, LivingFieldObject>>(entries.size());
+        for (val entry : entries)
+            pairs.add(Pair.create(entry.getKey(), entry.getValue()));
+        return pairs;
     }
 
     public void clear() {

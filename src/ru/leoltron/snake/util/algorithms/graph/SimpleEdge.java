@@ -2,7 +2,7 @@ package ru.leoltron.snake.util.algorithms.graph;
 
 import lombok.Getter;
 
-public class SimpleEdge implements Edge{
+public final class SimpleEdge implements Edge {
     @Getter
     private Vertex from;
     @Getter

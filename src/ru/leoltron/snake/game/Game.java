@@ -6,12 +6,11 @@ import lombok.val;
 import ru.leoltron.snake.game.controller.GameController;
 import ru.leoltron.snake.game.controller.MultiLevelGameController;
 import ru.leoltron.snake.game.entity.FieldObject;
-import ru.leoltron.snake.game.entity.FieldObjectMoving;
 import ru.leoltron.snake.game.entity.LivingFieldObject;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Pair;
 
-import java.util.*;
+import java.util.Collection;
 
 public class Game {
 
@@ -80,38 +79,12 @@ public class Game {
                 tempPauseTime--;
             return;
         } else if (!isPaused) {
-            Collection<Map.Entry<GamePoint, LivingFieldObject>> entries = gameField.getLivingFieldObjects();
-            for (val entry : entries)
-                entry.getValue().tick(gameField, entry.getKey());
-//            val movedObjects = moveFieldObjects();
-//            for (val entry : movedObjects)
-//                gameField.addEntity(entry.getItem1(), entry.getItem2());
+            Collection<Pair<GamePoint, LivingFieldObject>> pairs = gameField.getLivingFieldObjects();
+            for (val pair : pairs)
+                pair.getItem2().tick(gameField, pair.getItem1());
             gameController.tick();
         }
         time++;
-    }
-
-    private List<Pair<GamePoint, FieldObject>> moveFieldObjects() {
-        val movedObjects = new ArrayList<Pair<GamePoint, FieldObject>>();
-
-        Iterator<Map.Entry<GamePoint, FieldObject>> iterator = gameField.getFieldObjects().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<GamePoint, FieldObject> entry = iterator.next();
-            val fieldObject = entry.getValue();
-            if (fieldObject instanceof FieldObjectMoving) {
-                int x = entry.getKey().x;
-                int y = entry.getKey().y;
-
-                val movingObject = ((FieldObjectMoving) fieldObject);
-                x += movingObject.getVelX();
-                y += movingObject.getVelY();
-
-                movedObjects.add(Pair.create(new GamePoint(x, y), fieldObject));
-                iterator.remove();
-            }
-            fieldObject.tick();
-        }
-        return movedObjects;
     }
 
     public void setCurrentDirection(Direction direction) {
