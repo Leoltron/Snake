@@ -10,6 +10,10 @@ public class SnakePart extends FieldObject {
 
     private SnakeController snakeController;
 
+
+    @Getter
+    @Setter
+    private int snakeOwnerId = 3;
     @Getter
     @Setter
     private Direction prevPartDirection;
@@ -39,7 +43,7 @@ public class SnakePart extends FieldObject {
 
     @Override
     public FieldObject clone() {
-        val part = new SnakePart(this.snakeController);
+        val part = new SnakePart(snakeController);
         part.prevPartDirection = prevPartDirection;
         part.nextPartDirection = nextPartDirection;
         return part;

@@ -19,35 +19,49 @@ import static java.awt.image.AffineTransformOp.TYPE_BILINEAR;
 import static ru.leoltron.snake.game.Direction.*;
 
 public class SnakeDrawer implements IDrawer {
+    public enum SnakeColor {
+        GREEN, RED, BLUE, PURPLE
+    }
 
-    private static final BufferedImage BEND = tryGetSnakeImage("bend.png");
-    private static final BufferedImage[] HEADS = {
-            tryGetSnakeImage("head.png"),
-            tryGetSnakeImage("headTongue.png")
-    };
+    private static final BufferedImage[] BEND = new BufferedImage[SnakeColor.values().length];
+    private static final BufferedImage[][] HEADS = new BufferedImage[SnakeColor.values().length][];
+    private static final BufferedImage[] STRAIGHT = new BufferedImage[SnakeColor.values().length];
+    private static final BufferedImage[][] TAILS = new BufferedImage[SnakeColor.values().length][];
 
-    private static final BufferedImage STRAIGHT = tryGetSnakeImage("straight.png");
-    private static final BufferedImage[] TAILS = {
-            tryGetSnakeImage("tailRight.png"),
-            tryGetSnakeImage("tail.png"),
-            tryGetSnakeImage("tailLeft.png"),
-            tryGetSnakeImage("tail.png")
-    };
+
+    static {
+        for (val color : SnakeColor.values()) {
+            int i = color.ordinal();
+            BEND[i] = tryGetSnakeImage(color, "bend.png");
+            HEADS[i] = new BufferedImage[]{
+                    tryGetSnakeImage(color, "head.png"),
+                    tryGetSnakeImage(color, "headTongue.png")
+            };
+            STRAIGHT[i] = tryGetSnakeImage(color, "straight.png");
+            TAILS[i] = new BufferedImage[]{
+                    tryGetSnakeImage(color, "tailRight.png"),
+                    tryGetSnakeImage(color, "tail.png"),
+                    tryGetSnakeImage(color, "tailLeft.png"),
+                    tryGetSnakeImage(color, "tail.png")
+            };
+        }
+    }
 
     @Override
     public BufferedImage getImage(FieldObject fieldObject, int time) {
         val snakePart = (SnakePart) fieldObject;
+        val colorId = snakePart.getSnakeOwnerId();
         val nextDirection = snakePart.getNextPartDirection();
         val prevDirection = snakePart.getPrevPartDirection();
         BufferedImage img;
         if (snakePart.isHead())
-            img = HEADS[time % HEADS.length];
+            img = HEADS[colorId][time % HEADS[colorId].length];
         else if (snakePart.isTail())
-            img = TAILS[time % TAILS.length];
+            img = TAILS[colorId][time % TAILS[colorId].length];
         else if (nextDirection.reversed() == prevDirection)
-            img = STRAIGHT;
+            img = STRAIGHT[colorId];
         else
-            img = BEND;
+            img = BEND[colorId];
         return rotateSnakeImage(img, prevDirection, nextDirection);
     }
 
@@ -55,9 +69,9 @@ public class SnakeDrawer implements IDrawer {
         return ImageIO.read(new File(String.join(File.separator, path)));
     }
 
-    private static BufferedImage tryGetSnakeImage(String imageName) {
+    private static BufferedImage tryGetSnakeImage(SnakeColor color, String imageName) {
         try {
-            return getImage("resources", "textures", "snake", imageName);
+            return getImage("resources", "textures", "snake", color.name().toLowerCase(), imageName);
         } catch (IOException e) {
             e.printStackTrace();
         }
