@@ -87,12 +87,8 @@ public class Game {
         time++;
     }
 
-    public void setCurrentDirection(Direction direction) {
-        gameController.setCurrentDirection(direction);
-    }
-
     public boolean isGameOver() {
-        return gameController.isSnakeDead();
+        return gameController.isGameOver();
     }
 
     public FieldObject getObjectAt(int x, int y) {

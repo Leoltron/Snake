@@ -1,5 +1,6 @@
-package ru.leoltron.snake.game.controller.module;
+package ru.leoltron.snake.game.controller.snake;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
@@ -13,24 +14,29 @@ import java.util.LinkedList;
 public class SnakeController {
     private static final int DEFAULT_SNAKE_LENGTH = 4;
     private final int snakeLength;
-
+    @SuppressWarnings("WeakerAccess")
+    protected LinkedList<GamePoint> body;
     @Setter
     private GamePoint startPoint = null;
     @Setter
     private Direction startDirection = Direction.UP;
-
-    @SuppressWarnings("WeakerAccess")
-    protected LinkedList<GamePoint> body;
+    @Getter
+    private int playerId;
     private int snakePartsGoingToAdd;
     private Direction currentDirection;
 
     public SnakeController() {
-        this(DEFAULT_SNAKE_LENGTH);
+        this(0);
     }
 
-    public SnakeController(int snakeLength) {
+    public SnakeController(int playerId) {
+        this(playerId, DEFAULT_SNAKE_LENGTH);
+    }
+
+    public SnakeController(int playerId, int snakeLength) {
         if (snakeLength < 1)
             throw new IllegalArgumentException("Snake length must be positive!");
+        this.playerId = playerId;
         this.snakeLength = snakeLength;
     }
 
@@ -41,7 +47,7 @@ public class SnakeController {
 
         body = new LinkedList<>();
         body.addFirst(startGamePoint);
-        field.addEntity(startGamePoint, new SnakePart(this));
+        field.addEntity(startGamePoint, new SnakePart(this, playerId));
         snakePartsGoingToAdd = initialLength - 1;
 
     }
@@ -88,7 +94,7 @@ public class SnakeController {
     }
 
     private void addNewHead(GameField field) {
-        val newHead = new SnakePart(this);
+        val newHead = new SnakePart(this, playerId);
         newHead.setPrevPartDirection(currentDirection.reversed());
 
         val location = getHeadLocation().translated(currentDirection);

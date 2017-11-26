@@ -1,4 +1,4 @@
-package ru.leoltron.snake.game.controller.module.generator;
+package ru.leoltron.snake.game.controller.fieldGenerator;
 
 import lombok.NonNull;
 import lombok.val;
@@ -37,6 +37,17 @@ public class PredefinedFieldGenerator extends GameFieldGenerator {
         parseField(lines);
     }
 
+    private static int getMaxLength(@NonNull String[] strings) {
+        int max = 0;
+        for (val string : strings)
+            max = Math.max(max, string.length());
+        return max;
+    }
+
+    public static PredefinedFieldGenerator fromFile(String path) throws IOException {
+        return new PredefinedFieldGenerator(Files.readAllLines(Paths.get(path)).toArray(new String[0]));
+    }
+
     private void parseField(String[] lines) {
         fieldWidth = getMaxLength(lines);
         fieldHeight = lines.length;
@@ -48,13 +59,6 @@ public class PredefinedFieldGenerator extends GameFieldGenerator {
     private void tryAddFieldObject(int x, int y, char key) {
         if (charsToFieldObjects.containsKey(key))
             fieldObjects.put(new GamePoint(x, y), charsToFieldObjects.get(key));
-    }
-
-    private static int getMaxLength(@NonNull String[] strings) {
-        int max = 0;
-        for (val string : strings)
-            max = Math.max(max, string.length());
-        return max;
     }
 
     @Override
@@ -73,9 +77,5 @@ public class PredefinedFieldGenerator extends GameFieldGenerator {
     private void copyFieldObjectsTo(HashMap<GamePoint, FieldObject> map) {
         for (val entry : fieldObjects.entrySet())
             map.put(entry.getKey(), entry.getValue().clone());
-    }
-
-    public static PredefinedFieldGenerator fromFile(String path) throws IOException {
-        return new PredefinedFieldGenerator(Files.readAllLines(Paths.get(path)).toArray(new String[0]));
     }
 }

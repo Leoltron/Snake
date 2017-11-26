@@ -1,4 +1,4 @@
-package ru.leoltron.snake.game.controller.module.generator;
+package ru.leoltron.snake.game.controller.fieldGenerator;
 
 import lombok.val;
 import ru.leoltron.snake.game.GameField;

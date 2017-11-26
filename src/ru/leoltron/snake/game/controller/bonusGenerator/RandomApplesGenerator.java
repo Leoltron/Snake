@@ -1,4 +1,4 @@
-package ru.leoltron.snake.game.controller.module.generator;
+package ru.leoltron.snake.game.controller.bonusGenerator;
 
 import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.Apple;

@@ -1,4 +1,4 @@
-package ru.leoltron.snake.game.controller.module.generator;
+package ru.leoltron.snake.game.controller.fieldGenerator;
 
 import lombok.val;
 import ru.leoltron.snake.game.entity.FieldObject;
@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BorderGameFieldGenerator extends GameFieldGenerator {
+    protected static void addWallAt(Map<GamePoint, FieldObject> objectMap, int x, int y) {
+        objectMap.put(new GamePoint(x, y), new Wall());
+    }
+
     @Override
     public Map<GamePoint, FieldObject> generateFieldObjects(int width, int height) {
         val objects = new HashMap<GamePoint, FieldObject>();
@@ -27,9 +31,5 @@ public class BorderGameFieldGenerator extends GameFieldGenerator {
             addWallAt(objects, x, bottom);
         }
         return objects;
-    }
-
-    protected static void addWallAt(Map<GamePoint, FieldObject> objectMap, int x, int y) {
-        objectMap.put(new GamePoint(x, y), new Wall());
     }
 }

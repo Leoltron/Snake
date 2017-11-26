@@ -1,13 +1,27 @@
 package ru.leoltron.snake.game.controller;
 
 import lombok.val;
-import ru.leoltron.snake.game.controller.module.Level;
-import ru.leoltron.snake.game.controller.module.generator.*;
+import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
+import ru.leoltron.snake.game.controller.bonusGenerator.RandomApplesGenerator;
+import ru.leoltron.snake.game.controller.fieldGenerator.BorderGameFieldGenerator;
+import ru.leoltron.snake.game.controller.fieldGenerator.GameFieldGenerator;
+import ru.leoltron.snake.game.controller.fieldGenerator.PredefinedFieldGenerator;
+import ru.leoltron.snake.game.controller.fieldGenerator.RandomGameFieldGenerator;
+import ru.leoltron.snake.game.controller.snake.SnakeController;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class AdaptedMultiLevelGameController extends MultiLevelGameController {
+
+    public AdaptedMultiLevelGameController(SnakeController controller) {
+        super(controller);
+    }
+
+    public AdaptedMultiLevelGameController(List<SnakeController> controllers) {
+        super(controllers);
+    }
 
     private static GameFieldGenerator tryGetFieldGenFromFile(String levelFileName) {
         GameFieldGenerator fieldGenerator;

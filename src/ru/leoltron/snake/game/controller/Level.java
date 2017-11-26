@@ -1,8 +1,8 @@
-package ru.leoltron.snake.game.controller.module;
+package ru.leoltron.snake.game.controller;
 
 import lombok.NonNull;
-import ru.leoltron.snake.game.controller.module.generator.AppleGenerator;
-import ru.leoltron.snake.game.controller.module.generator.GameFieldGenerator;
+import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
+import ru.leoltron.snake.game.controller.fieldGenerator.GameFieldGenerator;
 
 public class Level {
     public final GameFieldGenerator fieldGenerator;

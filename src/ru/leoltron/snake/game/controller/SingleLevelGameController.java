@@ -1,12 +1,12 @@
 package ru.leoltron.snake.game.controller;
 
 import lombok.NonNull;
-import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.GameField;
-import ru.leoltron.snake.game.controller.module.SnakeController;
-import ru.leoltron.snake.game.controller.module.generator.*;
+import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
+import ru.leoltron.snake.game.controller.fieldGenerator.GameFieldGenerator;
+import ru.leoltron.snake.game.controller.snake.SnakeController;
 
-public class SingleLevelGameController implements GameController {
+public class SingleLevelGameController extends GameController {
     private final GameFieldGenerator gameFieldGenerator;
     private final AppleGenerator appleGenerator;
     private final SnakeController snakeController;
@@ -44,12 +44,7 @@ public class SingleLevelGameController implements GameController {
     }
 
     @Override
-    public void setCurrentDirection(Direction direction) {
-        snakeController.setCurrentDirection(direction);
-    }
-
-    @Override
-    public boolean isSnakeDead() {
+    public boolean isGameOver() {
         return snakeController.isSnakeDead(gameField);
     }
 
@@ -61,27 +56,5 @@ public class SingleLevelGameController implements GameController {
     @Override
     public void setTempUnpaused() {
         isStartGamePauseActive = false;
-    }
-
-
-    public static SingleLevelGameController getClassicGameController() {
-        return new SingleLevelGameController(
-                new RandomApplesGenerator(),
-                new BorderGameFieldGenerator(),
-                new SnakeController());
-    }
-
-    public static SingleLevelGameController getPredefinedLevelGameController(String level) {
-        return new SingleLevelGameController(
-                new RandomApplesGenerator(),
-                new PredefinedFieldGenerator(level),
-                new SnakeController());
-    }
-
-    public static SingleLevelGameController getPredefinedLevelGameController(String[] level) {
-        return new SingleLevelGameController(
-                new RandomApplesGenerator(),
-                new PredefinedFieldGenerator(level),
-                new SnakeController());
     }
 }

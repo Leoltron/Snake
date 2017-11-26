@@ -1,9 +1,8 @@
-package ru.leoltron.snake.game.controller.module.generator;
+package ru.leoltron.snake.game.controller.fieldGenerator;
 
 
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.entity.AppleEater;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.algorithms.Algorithms;

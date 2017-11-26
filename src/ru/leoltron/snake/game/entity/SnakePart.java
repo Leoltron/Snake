@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.controller.module.SnakeController;
+import ru.leoltron.snake.game.controller.snake.SnakeController;
 
 public class SnakePart extends FieldObject {
 
@@ -13,7 +13,7 @@ public class SnakePart extends FieldObject {
 
     @Getter
     @Setter
-    private int snakeOwnerId = 3;
+    private int snakeOwnerId;
     @Getter
     @Setter
     private Direction prevPartDirection;
@@ -23,6 +23,11 @@ public class SnakePart extends FieldObject {
 
     public SnakePart(SnakeController snakeController) {
         this.snakeController = snakeController;
+    }
+
+    public SnakePart(SnakeController snakeController, int snakeOwnerId) {
+        this(snakeController);
+        this.snakeOwnerId = snakeOwnerId;
     }
 
     public boolean isHead(){
@@ -37,7 +42,7 @@ public class SnakePart extends FieldObject {
     public void onCollisionWith(FieldObject object) {
         if (object instanceof Edible)
             snakeController.onFoodEaten((Edible) object);
-        else {
+        else if (this.isHead()) {
             System.out.println("Snake died from collision with " + object.getClass().getName());
             setDead();
         }
