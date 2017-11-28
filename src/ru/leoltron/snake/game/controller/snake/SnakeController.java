@@ -12,7 +12,7 @@ import ru.leoltron.snake.util.GamePoint;
 import java.util.LinkedList;
 
 public class SnakeController {
-    private static final int DEFAULT_SNAKE_LENGTH = 4;
+    protected static final int DEFAULT_SNAKE_LENGTH = 4;
     private final int snakeLength;
     @SuppressWarnings("WeakerAccess")
     protected LinkedList<GamePoint> body;

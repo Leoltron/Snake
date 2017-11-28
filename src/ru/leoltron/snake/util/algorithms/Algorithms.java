@@ -34,7 +34,7 @@ public final class Algorithms {
         return components;
     }
 
-    public static HashMap<Vertex, Integer> bfs(Vertex start, int maxDistance) throws InterruptedException {
+    public static HashMap<Vertex, Integer> bfs(Vertex start) throws InterruptedException {
         val distances = new HashMap<Vertex, Integer>();
         distances.put(start, 0);
         Queue<Vertex> queue = new Queue<>();
@@ -42,13 +42,12 @@ public final class Algorithms {
         while (!queue.isEmpty()) {
             Vertex current = queue.dequeue();
             int currentDistance = distances.get(current);
-            if (currentDistance == maxDistance)
-                continue;
             for (val edge : current.getHeighbors()){
                 val to = edge.getTo();
                 if (distances.containsKey(to))
                     continue;
                 distances.put(to, currentDistance + 1);
+                queue.enqueue(to);
             }
         }
         return distances;

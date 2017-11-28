@@ -54,6 +54,7 @@ public class SnakePart extends FieldObject {
         val part = new SnakePart(snakeController);
         part.prevPartDirection = prevPartDirection;
         part.nextPartDirection = nextPartDirection;
+        part.snakeOwnerId = snakeOwnerId;
         return part;
     }
 

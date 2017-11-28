@@ -13,5 +13,13 @@ public abstract class Graph {
         return vertices;
     }
 
-    public abstract void addEdge(SimpleEdge edge);
+    public void addVertex(Vertex vertex){
+        vertices.add(vertex);
+    }
+
+    public boolean hasVertex(Vertex vertex){
+        return vertices.contains(vertex);
+    }
+
+    public abstract void addEdge(Edge edge);
 }

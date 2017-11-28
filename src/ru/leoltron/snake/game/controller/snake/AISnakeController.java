@@ -2,7 +2,7 @@ package ru.leoltron.snake.game.controller.snake;
 
 import ru.leoltron.snake.game.GameField;
 
-public class AISnakeController extends SnakeController {
+public abstract class AISnakeController extends SnakeController {
     public AISnakeController(int playerId) {
         super(playerId);
     }
@@ -11,7 +11,5 @@ public class AISnakeController extends SnakeController {
         super(playerId, snakeLength);
     }
 
-    public void preTick(GameField field) {
-        //TODO: Where to go?
-    }
+    public abstract void preTick(GameField field);
 }

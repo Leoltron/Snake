@@ -72,7 +72,7 @@ public class RandomGameFieldGenerator extends BorderGameFieldGenerator {
                 val current = new GamePoint(i, j);
                 val currentVertex = new Vertex();
                 vertexFromGamePoint.put(current, currentVertex);
-                graph.getVertices().add(currentVertex);
+                graph.addVertex(currentVertex);
             }
         }
         for (int i = 0; i < width; i++) {

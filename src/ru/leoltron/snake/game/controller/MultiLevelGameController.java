@@ -9,6 +9,7 @@ import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
 import ru.leoltron.snake.game.controller.bonusGenerator.RandomApplesGenerator;
 import ru.leoltron.snake.game.controller.fieldGenerator.RandomGameFieldGenerator;
 import ru.leoltron.snake.game.controller.snake.AISnakeController;
+import ru.leoltron.snake.game.controller.snake.SimpleAISnakeController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ public class MultiLevelGameController extends GameController {
     public void tick() {
         for (val snakeController : players)
             if (snakeController instanceof AISnakeController)
-                ((AISnakeController) snakeController).preTick(field);
+                ((AISnakeController)snakeController).preTick(field);
         appleGenerator.tick(field);
         for (val snakeController : players) {
             snakeController.tick(field);

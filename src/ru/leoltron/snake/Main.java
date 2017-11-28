@@ -3,6 +3,7 @@ package ru.leoltron.snake;
 import lombok.val;
 import ru.leoltron.snake.game.Game;
 import ru.leoltron.snake.game.controller.AdaptedMultiLevelGameController;
+import ru.leoltron.snake.game.controller.snake.SimpleAISnakeController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 import ru.leoltron.snake.gui.GameKeyListener;
 import ru.leoltron.snake.gui.GamePanel;
@@ -106,7 +107,7 @@ public class Main {
         val panelHeight = (int) (fieldHeight * 64 * scale);
 
         val controller1 = new SnakeController(0);
-        val controller2 = new SnakeController(1);
+        val controller2 = new SimpleAISnakeController(1);
         val game = new Game(new AdaptedMultiLevelGameController(controller1, controller2), fieldWidth, fieldHeight);
         game.startNewGame();
         val gui = new GamePanel(fieldWidth, fieldHeight, game, scale);

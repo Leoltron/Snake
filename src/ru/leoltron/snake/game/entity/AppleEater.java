@@ -79,6 +79,8 @@ public class AppleEater extends LivingFieldObject implements Edible {
             if (currentCost == optimalCost)
                 answer.add(direction);
         }
+        if (answer.isEmpty())
+            return null;
         return answer.get(field.rand.nextInt(answer.size()));
     }
 
@@ -90,11 +92,11 @@ public class AppleEater extends LivingFieldObject implements Edible {
             return -Double.MAX_VALUE;
         for (val object : nearestObjects){
             if (object.getItem2().getClass() == Apple.class)
-                currentCost += 4 - location.euclideanDistanceTo(object.getItem1());
+                currentCost += 4 - location.manhattanDistanceTo(object.getItem1());
             else if (object.getItem2().getClass() == SnakePart.class){
                 val sneakPart = (SnakePart)object.getItem2();
                 if (sneakPart.isHead())
-                    currentCost += location.euclideanDistanceTo(object.getItem1()) - 5;
+                    currentCost += location.manhattanDistanceTo(object.getItem1()) - 5;
             }
         }
         return currentCost;
