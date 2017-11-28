@@ -1,8 +1,6 @@
 package ru.leoltron.snake.util;
 
-import com.sun.org.apache.xpath.internal.operations.Equals;
 import lombok.Value;
-import lombok.val;
 
 @Value
 public class Pair<T1, T2> {

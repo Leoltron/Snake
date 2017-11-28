@@ -10,7 +10,6 @@ public class SnakePart extends FieldObject {
 
     private SnakeController snakeController;
 
-
     @Getter
     @Setter
     private int snakeOwnerId;
@@ -42,10 +41,12 @@ public class SnakePart extends FieldObject {
     public void onCollisionWith(FieldObject object) {
         if (object instanceof Edible)
             snakeController.onFoodEaten((Edible) object);
-        else if (this.isHead()) {
+        else if (this.isHead() && !(object instanceof SnakePart && ((SnakePart) object).isSnakeDead())) {
             System.out.println("Snake died from collision with " + object.getClass().getName());
             setDead();
-        }
+            snakeController.setSnakeDead();
+        } else if (!this.isHead() && this.isSnakeDead())
+            setDead();
     }
 
     @Override
@@ -54,5 +55,9 @@ public class SnakePart extends FieldObject {
         part.prevPartDirection = prevPartDirection;
         part.nextPartDirection = nextPartDirection;
         return part;
+    }
+
+    public boolean isSnakeDead() {
+        return snakeController.isSnakeDeadSimple();
     }
 }

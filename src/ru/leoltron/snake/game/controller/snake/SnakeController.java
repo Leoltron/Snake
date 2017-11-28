@@ -22,8 +22,12 @@ public class SnakeController {
     private Direction startDirection = Direction.UP;
     @Getter
     private int playerId;
+    @Getter
+    @Setter
+    private int applesEatenRecently;
     private int snakePartsGoingToAdd;
     private Direction currentDirection;
+    private boolean isDead = false;
 
     public SnakeController() {
         this(0);
@@ -42,7 +46,7 @@ public class SnakeController {
 
     private void respawnSnake(GameField field, GamePoint startGamePoint, int initialLength) {
         clearFieldFromSnake(field);
-
+        isDead = false;
         currentDirection = startDirection;
 
         body = new LinkedList<>();
@@ -77,6 +81,7 @@ public class SnakeController {
 
     public void onFoodEaten(Edible edible) {
         snakePartsGoingToAdd += edible.getFoodValue();
+        applesEatenRecently += edible.getFoodValue();
     }
 
     public void tick(GameField field) {
@@ -124,6 +129,15 @@ public class SnakeController {
         return body == null ||
                 body.isEmpty() ||
                 !(field.getObjectAt(getHeadLocation()) instanceof SnakePart) ||
-                field.getObjectAt(getHeadLocation()).isDead();
+                field.getObjectAt(getHeadLocation()).isDead() ||
+                isDead;
+    }
+
+    public boolean isSnakeDeadSimple() {
+        return body == null || body.isEmpty() || isDead;
+    }
+
+    public void setSnakeDead() {
+        isDead = true;
     }
 }

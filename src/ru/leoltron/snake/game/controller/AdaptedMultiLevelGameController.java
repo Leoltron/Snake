@@ -15,8 +15,8 @@ import java.util.List;
 
 public class AdaptedMultiLevelGameController extends MultiLevelGameController {
 
-    public AdaptedMultiLevelGameController(SnakeController controller) {
-        super(controller);
+    public AdaptedMultiLevelGameController(SnakeController... controllers) {
+        super(controllers);
     }
 
     public AdaptedMultiLevelGameController(List<SnakeController> controllers) {

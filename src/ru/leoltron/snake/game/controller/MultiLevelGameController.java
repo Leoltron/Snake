@@ -7,14 +7,14 @@ import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
 import ru.leoltron.snake.game.controller.bonusGenerator.RandomApplesGenerator;
-import ru.leoltron.snake.game.controller.fieldGenerator.PredefinedFieldGenerator;
 import ru.leoltron.snake.game.controller.fieldGenerator.RandomGameFieldGenerator;
+import ru.leoltron.snake.game.controller.snake.AISnakeController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
-import ru.leoltron.snake.game.entity.Edible;
-import ru.leoltron.snake.util.GamePoint;
 
 import java.io.IOException;
 import java.util.*;
+
+import static ru.leoltron.snake.game.controller.fieldGenerator.PredefinedFieldGenerator.fromFile;
 
 public class MultiLevelGameController extends GameController {
     private int applesRequiredForLevel = 4;
@@ -31,21 +31,19 @@ public class MultiLevelGameController extends GameController {
     private Map<Integer, Level> levels = new HashMap<>();
     private Level defaultLevel = new Level(new RandomGameFieldGenerator(), new RandomApplesGenerator());
 
-    public MultiLevelGameController(SnakeController controller) {
-        this(Collections.singletonList(controller));
+    public MultiLevelGameController(SnakeController... controllers) {
+        this(Arrays.asList(controllers));
     }
 
     public MultiLevelGameController(List<SnakeController> controllers) {
-        this.players = new ArrayList<>(controllers.size());
-        for (val snakeController : controllers)
-            this.players.add(new SnakeControllerAdapter(snakeController));
+        this.players = controllers;
         initLevels();
     }
 
     protected void initLevels() {
         try {
-            levels.put(1, new Level(PredefinedFieldGenerator.fromFile("resources/fields/field1.txt"), new RandomApplesGenerator()));
-            levels.put(2, new Level(PredefinedFieldGenerator.fromFile("resources/fields/field2.txt"), new RandomApplesGenerator()));
+            levels.put(1, new Level(fromFile("resources/fields/field1.txt"), new RandomApplesGenerator()));
+            levels.put(2, new Level(fromFile("resources/fields/field2.txt"), new RandomApplesGenerator()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,9 +59,18 @@ public class MultiLevelGameController extends GameController {
 
     @Override
     public void tick() {
-        appleGenerator.tick(field);
         for (val snakeController : players)
+            if (snakeController instanceof AISnakeController)
+                ((AISnakeController) snakeController).preTick(field);
+        appleGenerator.tick(field);
+        for (val snakeController : players) {
             snakeController.tick(field);
+            applesEaten += snakeController.getApplesEatenRecently();
+            snakeController.setApplesEatenRecently(0);
+        }
+        if (applesEaten >= applesRequiredForLevel)
+            moveToNextLevel();
+
     }
 
     @Override
@@ -133,54 +140,5 @@ public class MultiLevelGameController extends GameController {
 
     public int getApplesLeftToEat() {
         return applesRequiredForLevel - applesEaten;
-    }
-
-
-    class SnakeControllerAdapter extends SnakeController {
-        private final SnakeController snakeController;
-
-        SnakeControllerAdapter(SnakeController snakeController) {
-            super(snakeController.getPlayerId());
-            this.snakeController = snakeController;
-        }
-
-        @Override
-        public void setStartPoint(GamePoint startPoint) {
-            snakeController.setStartPoint(startPoint);
-        }
-
-        @Override
-        public void setStartDirection(Direction startDirection) {
-            snakeController.setStartDirection(startDirection);
-        }
-
-        @Override
-        public void onFoodEaten(Edible edible) {
-            snakeController.onFoodEaten(edible);
-
-            applesEaten += edible.getFoodValue();
-            if (applesEaten >= applesRequiredForLevel)
-                moveToNextLevel();
-        }
-
-        @Override
-        public void tick(GameField field) {
-            snakeController.tick(field);
-        }
-
-        @Override
-        public void respawnSnake(GameField gameField) {
-            snakeController.respawnSnake(gameField);
-        }
-
-        @Override
-        public void setCurrentDirection(Direction direction) {
-            snakeController.setCurrentDirection(direction);
-        }
-
-        @Override
-        public boolean isSnakeDead(GameField field) {
-            return snakeController.isSnakeDead(field);
-        }
     }
 }
