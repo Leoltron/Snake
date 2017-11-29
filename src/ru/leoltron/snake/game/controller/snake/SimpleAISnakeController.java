@@ -4,11 +4,16 @@ import lombok.val;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.*;
+import ru.leoltron.snake.util.BijectionHashMap;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Triplet;
-import ru.leoltron.snake.util.algorithms.graph.*;
+import ru.leoltron.snake.util.algorithms.graph.SimpleEdge;
+import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
+import ru.leoltron.snake.util.algorithms.graph.Vertex;
+import ru.leoltron.snake.util.algorithms.graph.WeightedVertex;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static ru.leoltron.snake.util.algorithms.Algorithms.bfs;
 
@@ -19,7 +24,7 @@ public class SimpleAISnakeController extends AISnakeController {
         this(playerId, DEFAULT_SNAKE_LENGTH);
     }
 
-    public SimpleAISnakeController(int playerId, int snakeLength){
+    public SimpleAISnakeController(int playerId, int snakeLength) {
         super(playerId, snakeLength);
         costOfClass = new HashMap<>();
         costOfClass.put(Apple.class, 20);
@@ -28,7 +33,7 @@ public class SimpleAISnakeController extends AISnakeController {
     }
 
     @Override
-    public void preTick(GameField field){
+    public void preTick(GameField field) {
         val fieldInfo = BuildGraph(field);
         SimpleGraph graph = fieldInfo.getItem1();
         val currentGamePoint = findHead(field, getPlayerId());
@@ -47,24 +52,30 @@ public class SimpleAISnakeController extends AISnakeController {
 
     private WeightedVertex getTargetVartex(SimpleGraph graph, WeightedVertex head) {
         HashMap<Vertex, Integer> distances = null;
-        try { distances = bfs(head); } catch (InterruptedException ignored){}
+        try {
+            distances = bfs(head);
+        } catch (InterruptedException ignored) {
+        }
         WeightedVertex answer = null;
         assert distances != null;
-        for (val vertex : distances.keySet()){
+        for (val vertex : distances.keySet()) {
             val weightedVertex = (WeightedVertex) vertex;
             if (weightedVertex == head) continue;
-            if (answer == null || Greater( weightedVertex, answer, distances))
+            if (answer == null || Greater(weightedVertex, answer, distances))
                 answer = weightedVertex;
         }
         return answer;
     }
 
-    private WeightedVertex getNearestVertexToHead(SimpleGraph graph, WeightedVertex start, WeightedVertex head){
+    private WeightedVertex getNearestVertexToHead(SimpleGraph graph, WeightedVertex start, WeightedVertex head) {
         HashMap<Vertex, Integer> distances = null;
-        try { distances = bfs(start); } catch (InterruptedException ignored){}
+        try {
+            distances = bfs(start);
+        } catch (InterruptedException ignored) {
+        }
         WeightedVertex nearestVertex = null;
-        for (val edges : head.getHeighbors()){
-            val nextVertex = (WeightedVertex)edges.getTo();
+        for (val edges : head.getHeighbors()) {
+            val nextVertex = (WeightedVertex) edges.getTo();
             if (nextVertex.getWeight() < 0)
                 continue;
             if (nearestVertex == null)
@@ -78,14 +89,14 @@ public class SimpleAISnakeController extends AISnakeController {
         return nearestVertex;
     }
 
-    private boolean Greater(WeightedVertex a, WeightedVertex b, HashMap<Vertex, Integer> distances){
+    private boolean Greater(WeightedVertex a, WeightedVertex b, HashMap<Vertex, Integer> distances) {
         int distA = distances.get(a);
         int distB = distances.get(b);
-        return  (a.getWeight() * distB > b.getWeight() * distA);
+        return (a.getWeight() * distB > b.getWeight() * distA);
     }
 
     private GamePoint findHead(GameField field, int playerId) {
-        for (val object: field.getFieldObjects()){
+        for (val object : field.getFieldObjects()) {
             if (object.getValue().getClass() != SnakePart.class) continue;
             val sneakPart = (SnakePart) object.getValue();
             if (sneakPart.isHead() && sneakPart.getSnakeOwnerId() == playerId)
@@ -94,13 +105,12 @@ public class SimpleAISnakeController extends AISnakeController {
         return null;
     }
 
-    private Triplet<SimpleGraph, HashMap<GamePoint, WeightedVertex>, HashMap<WeightedVertex, GamePoint>>
-            BuildGraph(GameField field){
+    private Triplet<SimpleGraph, Map<GamePoint, WeightedVertex>, Map<WeightedVertex, GamePoint>>
+    BuildGraph(GameField field) {
         SimpleGraph graph = new SimpleGraph();
-        HashMap<WeightedVertex, GamePoint> gamePointFromVertex = new HashMap<>();
-        HashMap<GamePoint, WeightedVertex> vertexFromGamePoint = new HashMap<>();
+        val gamePointAndVertex = new BijectionHashMap<GamePoint, WeightedVertex>();
         for (int i = 0; i < field.getFieldWidth(); i++)
-            for (int j = 0; j < field.getFieldHeight(); j++){
+            for (int j = 0; j < field.getFieldHeight(); j++) {
                 FieldObject currentObject = field.getObjectAt(i, j);
                 if (currentObject != null && currentObject.getClass() == Wall.class)
                     continue;
@@ -108,20 +118,21 @@ public class SimpleAISnakeController extends AISnakeController {
                 if (currentObject != null)
                     cost = costOfClass.getOrDefault(currentObject.getClass(), 0);
                 val currentVertex = new WeightedVertex(cost);
-                gamePointFromVertex.put(currentVertex, new GamePoint(i, j));
-                vertexFromGamePoint.put(new GamePoint(i, j), currentVertex);
+                gamePointAndVertex.put(new GamePoint(i, j), currentVertex);
                 graph.addVertex(currentVertex);
             }
-        for (val vertex: graph.getVertices()){
-            val currentPoint = gamePointFromVertex.get(vertex);
-            for (val direction: Direction.values()){
+        for (val vertex : graph.getVertices()) {
+            val currentPoint = gamePointAndVertex.getReverse((WeightedVertex) vertex);
+            for (val direction : Direction.values()) {
                 val nextPoint = currentPoint.translated(direction);
                 val nextObject = field.getObjectAt(nextPoint);
                 if (nextObject != null && nextObject.getClass() == Wall.class)
                     continue;
-                graph.addEdge(new SimpleEdge(vertex, vertexFromGamePoint.get(nextPoint)));
+                graph.addEdge(new SimpleEdge(vertex, gamePointAndVertex.get(nextPoint)));
             }
         }
-        return Triplet.create(graph, vertexFromGamePoint, gamePointFromVertex);
+        return Triplet.create(graph,
+                gamePointAndVertex.toOneDirectionalMap(),
+                gamePointAndVertex.toReversedOneDirectionalMap());
     }
 }

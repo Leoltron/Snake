@@ -1,10 +1,10 @@
 package ru.leoltron.snake.util.algorithms;
 
 import lombok.val;
+import ru.leoltron.snake.util.SimpleQueue;
 import ru.leoltron.snake.util.algorithms.graph.Edge;
 import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
 import ru.leoltron.snake.util.algorithms.graph.Vertex;
-import sun.misc.Queue;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +37,7 @@ public final class Algorithms {
     public static HashMap<Vertex, Integer> bfs(Vertex start) throws InterruptedException {
         val distances = new HashMap<Vertex, Integer>();
         distances.put(start, 0);
-        Queue<Vertex> queue = new Queue<>();
+        val queue = new SimpleQueue<Vertex>();
         queue.enqueue(start);
         while (!queue.isEmpty()) {
             Vertex current = queue.dequeue();
