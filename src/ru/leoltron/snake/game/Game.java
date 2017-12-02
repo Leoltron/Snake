@@ -12,7 +12,7 @@ import ru.leoltron.snake.util.Pair;
 
 import java.util.Collection;
 
-public class Game {
+public class Game implements GameInfo, LevelInfo {
 
     public static final int TEMP_PAUSE_TIME_TICKS = 3;
     @Getter
@@ -97,6 +97,21 @@ public class Game {
 
     public void switchPaused() {
         isPaused = !isPaused;
+    }
+
+    @Override
+    public boolean isProvidingInfo() {
+        return gameController instanceof MultiLevelGameController;
+    }
+
+    @Override
+    public int getLevelNumber() {
+        return isProvidingInfo() ? ((MultiLevelGameController) gameController).getLevelNumber() : -1;
+    }
+
+    @Override
+    public int getApplesLeftToEat() {
+        return isProvidingInfo() ? ((MultiLevelGameController) gameController).getApplesLeftToEat() : -1;
     }
 }
 

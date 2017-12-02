@@ -2,8 +2,8 @@ package ru.leoltron.snake.gui;
 
 import lombok.val;
 import org.reflections.Reflections;
-import ru.leoltron.snake.game.Game;
-import ru.leoltron.snake.game.controller.MultiLevelGameController;
+import ru.leoltron.snake.game.GameInfo;
+import ru.leoltron.snake.game.LevelInfo;
 import ru.leoltron.snake.game.entity.*;
 import ru.leoltron.snake.gui.drawers.IDrawer;
 import ru.leoltron.snake.gui.drawers.SnakeDrawer;
@@ -21,17 +21,17 @@ public class GamePanel extends JPanel {
     private final double scale;
     private int width;
     private int height;
-    private Game game;
+    private GameInfo gameInfo;
     private HashMap<Class, IDrawer> drawers = new HashMap<>();
 
     private boolean drawGrid;
 
-    public GamePanel(int width, int height, Game game) throws IOException {
-        this(width, height, game, 1d);
+    public GamePanel(int width, int height, GameInfo gameInfo) throws IOException {
+        this(width, height, gameInfo, 1d);
     }
 
-    public GamePanel(int width, int height, Game game, double scale) throws IOException {
-        this.game = game;
+    public GamePanel(int width, int height, GameInfo gameInfo, double scale) throws IOException {
+        this.gameInfo = gameInfo;
         this.width = width;
         this.height = height;
         this.scale = scale;
@@ -48,7 +48,7 @@ public class GamePanel extends JPanel {
     }
 
     private void checkDrawersForAllFieldObjects() {
-        val reflections = new Reflections("ru.leoltron.snake.game.entity");
+        val reflections = new Reflections("ru.leoltron.snake.gameInfo.entity");
         val allClasses = reflections.getSubTypesOf(FieldObject.class);
         for (val foClass : allClasses) {
             if (Modifier.isAbstract(foClass.getModifiers())) continue;
@@ -65,11 +65,11 @@ public class GamePanel extends JPanel {
     }
 
     private Image getImageAt(int x, int y) {
-        val fieldObject = game.getObjectAt(x, y);
+        val fieldObject = gameInfo.getObjectAt(x, y);
         if (fieldObject == null)
             return null;
         val imgGetter = drawers.get(fieldObject.getClass());
-        return imgGetter == null ? null : imgGetter.getImage(fieldObject, game.getTime())
+        return imgGetter == null ? null : imgGetter.getImage(fieldObject, gameInfo.getTime())
                 .getScaledInstance((int) (64 * scale), (int) (64 * scale), Image.SCALE_SMOOTH);
     }
 
@@ -84,18 +84,19 @@ public class GamePanel extends JPanel {
     }
 
     private void drawStateStrings(Graphics graphics) {
-        if (game.isGameOver())
+        if (gameInfo.isGameOver())
             drawGameOverString(graphics);
-        else if (game.getTempPauseTime() > 0)
-            drawPausedTimeString(graphics, game.getTempPauseTime());
-        else if (game.isPaused())
+        else if (gameInfo.getTempPauseTime() > 0)
+            drawPausedTimeString(graphics, gameInfo.getTempPauseTime());
+        else if (gameInfo.isPaused())
             drawPausedString(graphics);
 
-        if (game.gameController instanceof MultiLevelGameController) {
-            val multiLevelGameController = (MultiLevelGameController) game.gameController;
-            drawLevelNumber(graphics, multiLevelGameController.getLevelNumber());
+        if (gameInfo instanceof LevelInfo) {
+            val levelInfo = (LevelInfo) gameInfo;
+            if (!levelInfo.isProvidingInfo()) return;
+            drawLevelNumber(graphics, levelInfo.getLevelNumber());
 
-            val s = String.format("Apples left: %d", multiLevelGameController.getApplesLeftToEat());
+            val s = String.format("Apples left: %d", levelInfo.getApplesLeftToEat());
             val font = getFont().deriveFont(32f);
             val metrics = graphics.getFontMetrics(font);
             graphics.setColor(Color.BLACK);
