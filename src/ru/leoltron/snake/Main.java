@@ -59,38 +59,7 @@ public class Main {
         val gui = new GamePanel(fieldWidth, fieldHeight, game, scale);
         val frame = new JFrame();
 
-        frame.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_G)
-                    gui.switchGridDrawMode();
-                else if (e.getKeyCode() == KeyEvent.VK_SPACE)
-                    tickGameAndUpdate(game, frame, true);
-                else if (e.isControlDown()) {
-                    switch (e.getKeyCode()) {
-                        case KeyEvent.VK_A:
-                            game.goToPrevLevel();
-                            break;
-                        case KeyEvent.VK_D:
-                            game.goToNextLevel();
-                            break;
-                        case KeyEvent.VK_L:
-                            game.restartLevel();
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
+        frame.addKeyListener(getLevelKeyListener(game, gui, frame));
 
         setFrame(frame, gui, panelWidth, panelHeight, new GameKeyListener(controller, 0));
         val period = 300;
@@ -113,7 +82,16 @@ public class Main {
         val gui = new GamePanel(fieldWidth, fieldHeight, game, scale);
         val frame = new JFrame();
 
-        frame.addKeyListener(new KeyListener() {
+        frame.addKeyListener(getLevelKeyListener(game, gui, frame));
+
+        setFrame(frame, gui, panelWidth, panelHeight, new GameKeyListener(controller1, 0), new GameKeyListener(controller2, 1));
+        val period = 300;
+        val timer = new Timer(period, actionEvent -> tickGameAndUpdate(game, frame, false));
+        timer.start();
+    }
+
+    private static KeyListener getLevelKeyListener(Game game, GamePanel gui, JFrame frame) {
+        return new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -144,12 +122,7 @@ public class Main {
             public void keyReleased(KeyEvent e) {
 
             }
-        });
-
-        setFrame(frame, gui, panelWidth, panelHeight, new GameKeyListener(controller1, 0), new GameKeyListener(controller2, 1));
-        val period = 300;
-        val timer = new Timer(period, actionEvent -> tickGameAndUpdate(game, frame, false));
-        timer.start();
+        };
     }
 
     private static void tickGameAndUpdate(Game game, JFrame frame, boolean forceTick) {
