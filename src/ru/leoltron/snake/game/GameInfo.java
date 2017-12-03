@@ -12,4 +12,8 @@ public interface GameInfo {
     boolean isPaused();
 
     FieldObject getObjectAt(int x, int y);
+
+    int getFieldWidth();
+
+    int getFieldHeight();
 }

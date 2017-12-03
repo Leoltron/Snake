@@ -33,6 +33,14 @@ public class Game implements GameInfo, LevelInfo {
         gameField = new GameField(fieldWidth, fieldHeight);
     }
 
+    public int getFieldWidth() {
+        return gameField.getFieldWidth();
+    }
+
+    public int getFieldHeight() {
+        return gameField.getFieldHeight();
+    }
+
 
     public void startNewGame() {
         gameController.startNewGame(gameField);

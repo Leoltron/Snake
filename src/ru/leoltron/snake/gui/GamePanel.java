@@ -26,14 +26,10 @@ public class GamePanel extends JPanel {
 
     private boolean drawGrid;
 
-    public GamePanel(int width, int height, GameInfo gameInfo) throws IOException {
-        this(width, height, gameInfo, 1d);
-    }
-
-    public GamePanel(int width, int height, GameInfo gameInfo, double scale) throws IOException {
+    public GamePanel(GameInfo gameInfo, double scale) throws IOException {
         this.gameInfo = gameInfo;
-        this.width = width;
-        this.height = height;
+        this.width = gameInfo.getFieldWidth();
+        this.height = gameInfo.getFieldHeight();
         this.scale = scale;
         registerDrawers();
         checkDrawersForAllFieldObjects();
