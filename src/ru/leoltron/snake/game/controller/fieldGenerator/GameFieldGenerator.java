@@ -1,8 +1,8 @@
 package ru.leoltron.snake.game.controller.fieldGenerator;
 
 import lombok.val;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.FieldObject;
+import ru.leoltron.snake.game.field.GameField;
 import ru.leoltron.snake.util.GamePoint;
 
 import java.util.Map;

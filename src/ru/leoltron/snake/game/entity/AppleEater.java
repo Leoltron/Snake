@@ -2,13 +2,14 @@ package ru.leoltron.snake.game.entity;
 
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.GameField;
+import ru.leoltron.snake.game.field.GameField;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class AppleEater extends LivingFieldObject implements Edible {
 
@@ -66,40 +67,18 @@ public class AppleEater extends LivingFieldObject implements Edible {
         field.addEntity(nextLocation, clone());
     }
 
-    private Direction getOptimalDirection(GameField field, GamePoint location,
-                                         Collection<Pair<GamePoint, FieldObject>> nearestObjects){
-        double optimalCost = -5;
-        List<Direction> answer = new ArrayList<>();
-        for (val direction: Direction.values()){
-            double currentCost = getCostOfPoint(field, location.translated(direction), nearestObjects);
-            if (currentCost > optimalCost){
-                optimalCost = currentCost;
-                answer.clear();
-            }
-            if (currentCost == optimalCost)
-                answer.add(direction);
-        }
-        if (answer.isEmpty())
-            return null;
-        return answer.get(field.rand.nextInt(answer.size()));
-    }
+    private static final Pattern SERIALIZATION_PATTERN = Pattern.compile("([\\d]+):([\\d]+)");
 
-    private double getCostOfPoint(GameField field, GamePoint location,
-                                  Collection<Pair<GamePoint, FieldObject>> nearestObjects){
-        double currentCost = 0;
-        val fieldObject = field.getObjectAt(location);
-        if (fieldObject != null && fieldObject.getClass() != Apple.class)
-            return -Double.MAX_VALUE;
-        for (val object : nearestObjects){
-            if (object.getItem2().getClass() == Apple.class)
-                currentCost += 4 - location.manhattanDistanceTo(object.getItem1());
-            else if (object.getItem2().getClass() == SnakePart.class){
-                val sneakPart = (SnakePart)object.getItem2();
-                if (sneakPart.isHead())
-                    currentCost += location.manhattanDistanceTo(object.getItem1()) - 5;
-            }
+    public static FieldObject deserialize(String s) {
+        val matcher = SERIALIZATION_PATTERN.matcher(s);
+        if (!matcher.matches()) {
+            System.err.println(AppleEater.class.toString() + ": Failed to deserialize string \"" + s + "\"");
+            return null;
         }
-        return currentCost;
+        val appleEater = new AppleEater();
+        appleEater.applesEaten = Integer.parseInt(matcher.group(1));
+        appleEater.applesRequiredToClone = Integer.parseInt(matcher.group(2));
+        return appleEater;
     }
 
     @Override
@@ -114,6 +93,61 @@ public class AppleEater extends LivingFieldObject implements Edible {
     @Override
     public FieldObject clone() {
         return new AppleEater(applesRequiredToClone, applesEaten);
+    }
+
+    private Direction getOptimalDirection(GameField field, GamePoint location,
+                                          Collection<Pair<GamePoint, FieldObject>> nearestObjects) {
+        double optimalCost = -5;
+        List<Direction> answer = new ArrayList<>();
+        for (val direction : Direction.values()) {
+            double currentCost = getCostOfPoint(field, location.translated(direction), nearestObjects);
+            if (currentCost > optimalCost) {
+                optimalCost = currentCost;
+                answer.clear();
+            }
+            if (currentCost == optimalCost)
+                answer.add(direction);
+        }
+        if (answer.isEmpty())
+            return null;
+        return answer.get(field.rand.nextInt(answer.size()));
+    }
+
+    private double getCostOfPoint(GameField field, GamePoint location,
+                                  Collection<Pair<GamePoint, FieldObject>> nearestObjects) {
+        double currentCost = 0;
+        val fieldObject = field.getObjectAt(location);
+        if (fieldObject != null && fieldObject.getClass() != Apple.class)
+            return -Double.MAX_VALUE;
+        for (val object : nearestObjects) {
+            if (object.getItem2().getClass() == Apple.class)
+                currentCost += 4 - location.manhattanDistanceTo(object.getItem1());
+            else if (object.getItem2().getClass() == SnakePart.class) {
+                val sneakPart = (SnakePart) object.getItem2();
+                if (sneakPart.isHead())
+                    currentCost += location.manhattanDistanceTo(object.getItem1()) - 5;
+            }
+        }
+        return currentCost;
+    }
+
+    @Override
+    public boolean equals(FieldObject other) {
+        if (other instanceof AppleEater) {
+            val appleEater = (AppleEater) other;
+            return appleEater.applesEaten == applesEaten && appleEater.applesRequiredToClone == applesRequiredToClone;
+        }
+        return false;
+    }
+
+    @Override
+    public FieldObject deserializeFromString(String s) {
+        return deserialize(s);
+    }
+
+    @Override
+    public String serializeToString() {
+        return String.format("%d:%d", applesEaten, applesRequiredToClone);
     }
 
     @Override

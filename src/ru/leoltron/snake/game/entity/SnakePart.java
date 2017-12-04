@@ -6,6 +6,8 @@ import lombok.val;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 
+import java.util.regex.Pattern;
+
 public class SnakePart extends FieldObject {
 
     private SnakeController snakeController;
@@ -20,6 +22,8 @@ public class SnakePart extends FieldObject {
     @Setter
     private Direction nextPartDirection;
 
+    private static final Pattern SERIALIZATION_PATTERN = Pattern.compile("([\\d]+):([\\w]+):([\\w]+)");
+
     public SnakePart(SnakeController snakeController) {
         this.snakeController = snakeController;
     }
@@ -29,12 +33,21 @@ public class SnakePart extends FieldObject {
         this.snakeOwnerId = snakeOwnerId;
     }
 
-    public boolean isHead(){
-        return nextPartDirection == null;
+    public SnakePart() {
+        this(null);
     }
 
-    public boolean isTail(){
-        return prevPartDirection == null;
+    public static FieldObject deserialize(String s) {
+        val matcher = SERIALIZATION_PATTERN.matcher(s);
+        if (!matcher.matches()) {
+            System.err.println(SnakePart.class.toString() + ": Failed to deserialize string \"" + s + "\"");
+            return null;
+        }
+        val snakePart = new SnakePart(null);
+        snakePart.snakeOwnerId = Integer.parseInt(matcher.group(1));
+        snakePart.prevPartDirection = Direction.valueOf(matcher.group(2));
+        snakePart.nextPartDirection = Direction.valueOf(matcher.group(3));
+        return snakePart;
     }
 
     @Override
@@ -56,6 +69,35 @@ public class SnakePart extends FieldObject {
         part.nextPartDirection = nextPartDirection;
         part.snakeOwnerId = snakeOwnerId;
         return part;
+    }
+
+    public boolean isHead() {
+        return nextPartDirection == null;
+    }
+
+    public boolean isTail() {
+        return prevPartDirection == null;
+    }
+
+    @Override
+    public boolean equals(FieldObject other) {
+        if (other instanceof SnakePart) {
+            val snakePart = (SnakePart) other;
+            return snakePart.snakeOwnerId == snakeOwnerId &&
+                    snakePart.prevPartDirection == prevPartDirection &&
+                    snakePart.nextPartDirection == nextPartDirection;
+        }
+        return false;
+    }
+
+    @Override
+    public FieldObject deserializeFromString(String s) {
+        return deserialize(s);
+    }
+
+    @Override
+    public String serializeToString() {
+        return String.format("%d:%s:%s", snakeOwnerId, prevPartDirection.name(), nextPartDirection.name());
     }
 
     public boolean isSnakeDead() {

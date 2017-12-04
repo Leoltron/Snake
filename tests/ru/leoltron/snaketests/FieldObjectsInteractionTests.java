@@ -3,12 +3,12 @@ package ru.leoltron.snaketests;
 import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 import ru.leoltron.snake.game.entity.Apple;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.SnakePart;
 import ru.leoltron.snake.game.entity.Wall;
+import ru.leoltron.snake.game.field.GameField;
 
 public class FieldObjectsInteractionTests extends Assert {
 

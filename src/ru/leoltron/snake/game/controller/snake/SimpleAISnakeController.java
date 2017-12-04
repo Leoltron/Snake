@@ -2,8 +2,8 @@ package ru.leoltron.snake.game.controller.snake;
 
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.*;
+import ru.leoltron.snake.game.field.GameField;
 import ru.leoltron.snake.util.BijectionHashMap;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Triplet;

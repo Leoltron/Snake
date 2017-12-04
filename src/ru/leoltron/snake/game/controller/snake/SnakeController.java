@@ -3,15 +3,16 @@ package ru.leoltron.snake.game.controller.snake;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import ru.leoltron.snake.game.CurrentDirectionHolder;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.entity.Edible;
 import ru.leoltron.snake.game.entity.SnakePart;
+import ru.leoltron.snake.game.field.GameField;
 import ru.leoltron.snake.util.GamePoint;
 
 import java.util.LinkedList;
 
-public class SnakeController {
+public class SnakeController implements CurrentDirectionHolder {
     protected static final int DEFAULT_SNAKE_LENGTH = 4;
     private final int snakeLength;
     @SuppressWarnings("WeakerAccess")
@@ -93,7 +94,10 @@ public class SnakeController {
             shortenTail(field);
 
         val headLoc = getHeadLocation();
-        ((SnakePart) field.getObjectAt(headLoc)).setNextPartDirection(currentDirection);
+        final SnakePart snakePart = (SnakePart) field.getObjectAt(headLoc);
+        snakePart.setNextPartDirection(currentDirection);
+        field.removeEntityAt(headLoc);
+        field.addEntity(headLoc, snakePart);
 
         addNewHead(field);
     }
@@ -113,6 +117,11 @@ public class SnakeController {
                 gameField,
                 startPoint != null ? startPoint : new GamePoint(3, gameField.getFieldHeight() - 3),
                 snakeLength);
+    }
+
+    @Override
+    public Direction getCurrentDirection() {
+        return currentDirection;
     }
 
     public void setCurrentDirection(Direction direction) {

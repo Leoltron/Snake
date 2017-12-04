@@ -12,6 +12,25 @@ public class Apple extends FieldObject implements Edible {
         return new Apple();
     }
 
+    public static FieldObject deserialize(String s) {
+        return new Apple();
+    }
+
+    @Override
+    public boolean equals(FieldObject other) {
+        return other instanceof Apple;
+    }
+
+    @Override
+    public FieldObject deserializeFromString(String s) {
+        return deserialize(s);
+    }
+
+    @Override
+    public String serializeToString() {
+        return "";
+    }
+
     @Override
     public int getFoodValue() {
         return 1;

@@ -1,10 +1,10 @@
 package ru.leoltron.snake.game.controller;
 
 import lombok.NonNull;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
 import ru.leoltron.snake.game.controller.fieldGenerator.GameFieldGenerator;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
+import ru.leoltron.snake.game.field.GameField;
 
 public class SingleLevelGameController extends GameController {
     private final GameFieldGenerator gameFieldGenerator;

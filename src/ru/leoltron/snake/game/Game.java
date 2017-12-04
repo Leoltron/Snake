@@ -7,6 +7,7 @@ import ru.leoltron.snake.game.controller.GameController;
 import ru.leoltron.snake.game.controller.MultiLevelGameController;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.LivingFieldObject;
+import ru.leoltron.snake.game.field.GameField;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Pair;
 
@@ -25,7 +26,7 @@ public class Game implements GameInfo, LevelInfo {
     private int tempPauseTime = 0;
 
     public final GameController gameController;
-    private GameField gameField;
+    protected GameField gameField;
 
     public Game(@NonNull GameController gameController,
                 int fieldWidth, int fieldHeight) {

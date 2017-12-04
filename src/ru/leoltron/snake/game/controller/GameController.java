@@ -1,6 +1,6 @@
 package ru.leoltron.snake.game.controller;
 
-import ru.leoltron.snake.game.GameField;
+import ru.leoltron.snake.game.field.GameField;
 
 public abstract class GameController {
     public abstract void tick();

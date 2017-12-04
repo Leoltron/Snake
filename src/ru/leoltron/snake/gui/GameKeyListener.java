@@ -1,8 +1,8 @@
 package ru.leoltron.snake.gui;
 
 import lombok.val;
+import ru.leoltron.snake.game.CurrentDirectionHolder;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.controller.snake.SnakeController;
 import ru.leoltron.snake.util.MapUtils;
 
 import java.awt.event.KeyEvent;
@@ -16,7 +16,8 @@ import static ru.leoltron.snake.game.Direction.*;
 
 public class GameKeyListener implements KeyListener {
     private static final List<Map<Integer, Direction>> CONTROL_KEY_BINDINGS = new ArrayList<>();
-
+    public static final int ARROWS_KEYS = 0;
+    public static final int WASD_KEYS = 1;
     static {
         val player1Bindings = new HashMap<Integer, Direction>();
         MapUtils.fillMap(player1Bindings,
@@ -35,11 +36,11 @@ public class GameKeyListener implements KeyListener {
         CONTROL_KEY_BINDINGS.add(player2Bindings);
     }
 
-    private SnakeController controller;
+    private CurrentDirectionHolder directionHolder;
     private Map<Integer, Direction> keyBindings;
 
-    public GameKeyListener(SnakeController controller, int usingControlSet) {
-        this.controller = controller;
+    public GameKeyListener(CurrentDirectionHolder directionHolder, int usingControlSet) {
+        this.directionHolder = directionHolder;
         this.keyBindings = CONTROL_KEY_BINDINGS.get(usingControlSet);
     }
 
@@ -51,7 +52,7 @@ public class GameKeyListener implements KeyListener {
     public void keyPressed(KeyEvent e) {
         val direction = keyBindings.getOrDefault(e.getKeyCode(), null);
         if (direction != null)
-            controller.setCurrentDirection(direction);
+            directionHolder.setCurrentDirection(direction);
     }
 
     @Override

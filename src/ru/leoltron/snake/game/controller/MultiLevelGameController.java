@@ -4,13 +4,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
 import ru.leoltron.snake.game.controller.bonusGenerator.RandomApplesGenerator;
 import ru.leoltron.snake.game.controller.fieldGenerator.RandomGameFieldGenerator;
 import ru.leoltron.snake.game.controller.snake.AISnakeController;
-import ru.leoltron.snake.game.controller.snake.SimpleAISnakeController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
+import ru.leoltron.snake.game.field.GameField;
 
 import java.io.IOException;
 import java.util.*;

@@ -1,6 +1,6 @@
 package ru.leoltron.snake.game.controller.snake;
 
-import ru.leoltron.snake.game.GameField;
+import ru.leoltron.snake.game.field.GameField;
 
 public abstract class AISnakeController extends SnakeController {
     public AISnakeController(int playerId) {

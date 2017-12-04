@@ -5,12 +5,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.Game;
-import ru.leoltron.snake.game.GameField;
 import ru.leoltron.snake.game.controller.SingleLevelGameController;
 import ru.leoltron.snake.game.controller.bonusGenerator.AppleGenerator;
 import ru.leoltron.snake.game.controller.fieldGenerator.BorderGameFieldGenerator;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 import ru.leoltron.snake.game.entity.SnakePart;
+import ru.leoltron.snake.game.field.GameField;
 import ru.leoltron.snake.util.GamePoint;
 
 public class SnakeTests extends Assert {
@@ -42,7 +42,7 @@ public class SnakeTests extends Assert {
 
     @Test
     public void testSnakeSuicide() {
-        val snakeController = new SnakeController(5);
+        val snakeController = new SnakeController(0, 5);
         val game = new Game(new SingleLevelGameController(
                 new EmptyAppleGenerator(),
                 new BorderGameFieldGenerator(),

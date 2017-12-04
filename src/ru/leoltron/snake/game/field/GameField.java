@@ -1,8 +1,9 @@
-package ru.leoltron.snake.game;
+package ru.leoltron.snake.game.field;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
+import ru.leoltron.snake.game.CollisionException;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.LivingFieldObject;
 import ru.leoltron.snake.util.GamePoint;
@@ -81,6 +82,11 @@ public class GameField {
         } else
             throw new IndexOutOfBoundsException(String.format("Coords (%d, %d) are out of bounds of the field " +
                     "(width: %d, height:%d)", coords.x, coords.y, fieldWidth, fieldHeight));
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public FieldObject removeEntityAt(int x, int y) {
+        return removeEntityAt(new GamePoint(x, y));
     }
 
     @SuppressWarnings("UnusedReturnValue")
