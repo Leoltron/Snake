@@ -5,8 +5,8 @@ import ru.leoltron.snake.game.Game;
 import ru.leoltron.snake.game.controller.AdaptedMultiLevelGameController;
 import ru.leoltron.snake.game.controller.snake.SimpleAISnakeController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
-import ru.leoltron.snake.network.ClientProtocol;
-import ru.leoltron.snake.network.ServerProtocol;
+import ru.leoltron.snake.network.MPClient;
+import ru.leoltron.snake.network.MPServer;
 import ru.leoltron.snake.util.Pair;
 
 import javax.imageio.ImageIO;
@@ -71,7 +71,7 @@ public class SelectModeFrame extends JFrame {
                     "Неверный формат, адрес должен быть указан в формате\nимя_хоста:порт, порт должен быть числом от 1 до 65535",
                     "Ошибка", JOptionPane.ERROR_MESSAGE);
         } else
-            new ClientProtocol(this, btnPanel, pair.getItem1(), pair.getItem2());
+            new MPClient(this, btnPanel, pair.getItem1(), pair.getItem2());
     }
 
     private void startMultiPlayerServer() {
@@ -83,7 +83,7 @@ public class SelectModeFrame extends JFrame {
                     "Ошибка", JOptionPane.ERROR_MESSAGE);
         } else {
             this.setVisible(false);
-            new ServerProtocol(Integer.parseInt(result));
+            new MPServer(Integer.parseInt(result));
         }
     }
 

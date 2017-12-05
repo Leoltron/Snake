@@ -18,7 +18,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
-public class ClientProtocol implements WindowListener, CurrentDirectionHolder {
+public class MPClient implements WindowListener, CurrentDirectionHolder {
 
     private static final Pattern UPDATE_PACKET_PATTERN = Pattern.compile("([\\d]+):([\\d]+):([\\d]+):([\\d]+)");
 
@@ -27,7 +27,7 @@ public class ClientProtocol implements WindowListener, CurrentDirectionHolder {
     private BufferedReader in;
     private MPClientGame game;
 
-    public ClientProtocol(JFrame parentFrame, JPanel parentPanel, String hostname, int port) {
+    public MPClient(JFrame parentFrame, JPanel parentPanel, String hostname, int port) {
         try {
             socket = new Socket(hostname, port);
             out = new PrintWriter(socket.getOutputStream(), true);

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.MPServerGame;
-import ru.leoltron.snake.game.controller.MultiLevelGameController;
+import ru.leoltron.snake.game.controller.AdaptedMultiLevelGameController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.regex.Pattern;
 
-public class ServerProtocol {
+public class MPServer {
     private static final Pattern CLIENT_UPDATE_PACKET_PATTERN = Pattern.compile("([\\d]+):([\\w]+)");
     private MPServerGame game;
     private int playersAmount;
@@ -27,11 +27,11 @@ public class ServerProtocol {
     private PrintWriter[] printWriters;
     private long lastPacketSendTime = 0;
 
-    public ServerProtocol(int port) {
+    public MPServer(int port) {
         this(port, 2);
     }
 
-    public ServerProtocol(int port, int playersAmount) {
+    public MPServer(int port, int playersAmount) {
         info(String.format("Starting server at port %d...", port));
         this.playersAmount = playersAmount;
         ServerSocket serverSocket;
@@ -47,7 +47,7 @@ public class ServerProtocol {
         printWriters = new PrintWriter[playersAmount];
         info("Initializing game...");
         for (int i = 0; i < playersAmount; i++) controllers[i] = new SnakeController(i);
-        game = new MPServerGame(new MultiLevelGameController(controllers), 64, 32);
+        game = new MPServerGame(new AdaptedMultiLevelGameController(controllers), 64, 32);
         info(String.format("Game initialized, waiting for %d player(s) to connect...", playersAmount));
         for (int i = 0; i < playersAmount; i++) {
             info("Waiting for player #" + i + "...");
@@ -78,7 +78,7 @@ public class ServerProtocol {
     }
 
     private void info(String message) {
-        System.out.println("[INFO] [ServerProtocol] " + message);
+        System.out.println("[INFO] [MPServer] " + message);
     }
 
     private void tickGameAndUpdate() {
