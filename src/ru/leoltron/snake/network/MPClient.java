@@ -6,17 +6,18 @@ import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.MPClientGame;
 import ru.leoltron.snake.gui.GameFrame;
 import ru.leoltron.snake.gui.GameKeyListener;
+import ru.leoltron.snake.util.LogUtils;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
+
+import static ru.leoltron.snake.util.LogUtils.findFreeFile;
+import static ru.leoltron.snake.util.LogUtils.getTodayDateString;
 
 public class MPClient implements WindowListener, CurrentDirectionHolder {
 
@@ -26,6 +27,8 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
     private PrintWriter out;
     private BufferedReader in;
     private MPClientGame game;
+
+    private static String logFilename = findFreeFile("logs/log_client_" + getTodayDateString(), ".log");
 
     public MPClient(JFrame parentFrame, JPanel parentPanel, String hostname, int port) {
         try {
@@ -66,14 +69,14 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
             try {
                 String line;
                 while ((line = in.readLine()) != null) {
-                    System.out.println("Received packet from server, processing...");
-                    System.out.println("Message: " + line);
+                    info("Received packet from server, processing...");
+                    info("Message: " + line);
                     val match = UPDATE_PACKET_PATTERN.matcher(line);
                     if (!match.matches()) {
                         System.err.println("Invalid update packet: " + line);
                         continue;
                     }
-                    System.out.println("Packet validated, sending reply...");
+                    info("Packet validated, sending reply...");
                     sendDirectionUpdatePacket();
 
                     int currentTick = Integer.parseInt(match.group(1));
@@ -86,13 +89,13 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
                             "\tlastPacketReceivedTick: %d\n" +
                             "\tobjAmount: %d\n", currentTick, delayMS, lastPacketReceivedTick, foAmount);
                     val foDescriptions = new String[foAmount];
-                    System.out.println("Receiving packets... ");
+                    info("Receiving packets... ");
                     for (int i = 0; i < foAmount; i++)
                     //noinspection StatementWithEmptyBody
                     {
                         while ((foDescriptions[i] = in.readLine()) == null) {
                         }
-                        System.out.println("Packet #" + i + ": " + foDescriptions[i]);
+                        info("Packet #" + i + ": " + foDescriptions[i]);
                     }
                     game.updateField(currentTick, foDescriptions);
                     SwingUtilities.updateComponentTreeUI(frame);
@@ -102,6 +105,14 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
                 closeAll();
             }
         }).start();
+    }
+
+    private static void log(String message, PrintStream primaryStream) {
+        LogUtils.log(logFilename, message, primaryStream);
+    }
+
+    private void info(String message) {
+        log("[INFO] [MPServer] " + message, System.out);
     }
 
     private void closeAll() {
@@ -139,7 +150,7 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
 
     private void sendDirectionUpdatePacket(Direction direction) {
         val message = game.getTime() + ":" + direction;
-        System.out.println("Sending DirectionUpdatePacket: " + message);
+        info("Sending DirectionUpdatePacket: " + message);
         out.println(message);
     }
 

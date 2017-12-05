@@ -41,9 +41,8 @@ public class MPServerGame extends Game {
             if (!changes.containsKey(time)) {
                 System.err.println("Have not found change description for time " + String.valueOf(time));
                 return null;
-            } else {
+            } else
                 return changes.get(time);
-            }
         } else if (time > curTime) {
             System.err.println(String.format("Cannot have future changes description! " +
                     "(Current time: %d, requested: %d)", curTime, time));

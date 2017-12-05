@@ -7,15 +7,16 @@ import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.MPServerGame;
 import ru.leoltron.snake.game.controller.AdaptedMultiLevelGameController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
+import ru.leoltron.snake.util.LogUtils;
 
 import javax.swing.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.regex.Pattern;
+
+import static ru.leoltron.snake.util.LogUtils.findFreeFile;
+import static ru.leoltron.snake.util.LogUtils.getTodayDateString;
 
 public class MPServer {
     private static final Pattern CLIENT_UPDATE_PACKET_PATTERN = Pattern.compile("([\\d]+):([\\w]+)");
@@ -26,6 +27,16 @@ public class MPServer {
     private Socket[] clientSockets;
     private PrintWriter[] printWriters;
     private long lastPacketSendTime = 0;
+
+    private static String logFilename = findFreeFile("logs/log_server_" + getTodayDateString(), ".log");
+
+    private static void log(String message, PrintStream primaryStream) {
+        LogUtils.log(logFilename, message, primaryStream);
+    }
+
+    private void info(String message) {
+        log("[INFO] [MPServer] " + message, System.out);
+    }
 
     public MPServer(int port) {
         this(port, 2);
@@ -77,10 +88,6 @@ public class MPServer {
         info("Done.");
     }
 
-    private void info(String message) {
-        System.out.println("[INFO] [MPServer] " + message);
-    }
-
     private void tickGameAndUpdate() {
         game.tick(false);
         broadcastUpdatePacket();
@@ -90,7 +97,7 @@ public class MPServer {
         info("Getting update packet...");
         val curTick = game.getTime();
         val packet = game.getChangePacket(curTick);
-        info("Message: " + curTick + ":(clientInfo):" + packet);
+        info("Message: " + curTick + ":(clientInfo):" + packet.replace("\n", "\n\t"));
         info("Broadcasting update packet...");
         for (int i = 0; i < playersAmount; i++) {
             val lastTick = clientInfos[i].lastPacketTickReceived <= 0 ? 0 : clientInfos[i].lastPacketTickReceived;
@@ -130,11 +137,11 @@ public class MPServer {
         }
 
         private void info(String message) {
-            System.out.println("[INFO]" + logPrefix + message);
+            log("[INFO]" + logPrefix + message, System.out);
         }
 
-        private void warn(String message) {
-            System.err.println("[WARNING]" + logPrefix + message);
+        private void error(String message) {
+            log("[ERROR]" + logPrefix + message, System.err);
         }
 
         @Override
@@ -146,7 +153,7 @@ public class MPServer {
                     info("Received message " + inputLine);
                     val matcher = CLIENT_UPDATE_PACKET_PATTERN.matcher(inputLine);
                     if (!matcher.matches())
-                        warn(String.format("Cannot handle client #%d message: %s", id, inputLine));
+                        error(String.format("Cannot handle client #%d message: %s", id, inputLine));
                     val tick = Integer.parseInt(matcher.group(1));
                     val newDir = Direction.valueOf(matcher.group(2));
                     info(String.format("Packet successfully validated, tick: %d, new direction: %s", tick, newDir.name()));
@@ -156,7 +163,7 @@ public class MPServer {
                     controllers[id].setCurrentDirection(newDir);
                 }
             } catch (IOException e) {
-                warn("An error occurred during reading message:");
+                error("An error occurred during reading message:");
                 e.printStackTrace();
             } finally {
                 if (in != null)
@@ -165,7 +172,7 @@ public class MPServer {
                         in.close();
                         info("Closed.");
                     } catch (IOException e) {
-                        warn("An error occurred during closing BufferedReader:");
+                        error("An error occurred during closing BufferedReader:");
                         e.printStackTrace();
                     }
             }
