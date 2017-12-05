@@ -45,4 +45,11 @@ public class LoggingGameField extends GameField {
         getFieldObjects().forEach(entry -> changes.put(entry.getKey(), entry.getValue()));
         super.clear();
     }
+
+    /**
+     * Forcing filed to include point as changed
+     */
+    public void markDirty(GamePoint point) {
+        changes.put(point, getObjectAt(point));
+    }
 }

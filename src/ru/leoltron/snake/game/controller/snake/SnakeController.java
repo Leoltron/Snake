@@ -8,6 +8,7 @@ import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.entity.Edible;
 import ru.leoltron.snake.game.entity.SnakePart;
 import ru.leoltron.snake.game.field.GameField;
+import ru.leoltron.snake.game.field.LoggingGameField;
 import ru.leoltron.snake.util.GamePoint;
 
 import java.util.LinkedList;
@@ -66,10 +67,9 @@ public class SnakeController implements CurrentDirectionHolder {
             }
     }
 
-    private void shortenTail(GameField field) {
-        field.removeEntityAt(body.removeLast());
-        if (!body.isEmpty())
-            ((SnakePart) field.getObjectAt(getTailLocation())).setPrevPartDirection(null);
+    private static void markDirty(GameField field, GamePoint headLoc) {
+        if (field instanceof LoggingGameField)
+            ((LoggingGameField) field).markDirty(headLoc);
     }
 
     private GamePoint getTailLocation() {
@@ -85,6 +85,14 @@ public class SnakeController implements CurrentDirectionHolder {
         applesEatenRecently += edible.getFoodValue();
     }
 
+    private void shortenTail(GameField field) {
+        field.removeEntityAt(body.removeLast());
+        if (!body.isEmpty()) {
+            ((SnakePart) field.getObjectAt(getTailLocation())).setPrevPartDirection(null);
+            markDirty(field, getTailLocation());
+        }
+    }
+
     public void tick(GameField field) {
         if (isSnakeDead(field)) return;
 
@@ -96,8 +104,7 @@ public class SnakeController implements CurrentDirectionHolder {
         val headLoc = getHeadLocation();
         final SnakePart snakePart = (SnakePart) field.getObjectAt(headLoc);
         snakePart.setNextPartDirection(currentDirection);
-        field.removeEntityAt(headLoc);
-        field.addEntity(headLoc, snakePart);
+        markDirty(field, headLoc);
 
         addNewHead(field);
     }
