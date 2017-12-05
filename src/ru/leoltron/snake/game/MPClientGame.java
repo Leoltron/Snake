@@ -7,7 +7,7 @@ import ru.leoltron.snake.game.field.GameField;
 import java.util.regex.Pattern;
 
 public class MPClientGame implements GameInfo, CurrentDirectionHolder {
-    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("([\\d]+):([\\d]+):([\\w\\.]+):([^:]*)");
+    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("([\\d]+):([\\d]+):([\\w.]+):(.*)");
     private GameField field;
     private int time;
     private Direction currentDirection;

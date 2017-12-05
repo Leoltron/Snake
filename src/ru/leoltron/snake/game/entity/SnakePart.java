@@ -45,8 +45,8 @@ public class SnakePart extends FieldObject {
         }
         val snakePart = new SnakePart(null);
         snakePart.snakeOwnerId = Integer.parseInt(matcher.group(1));
-        snakePart.prevPartDirection = Direction.valueOf(matcher.group(2));
-        snakePart.nextPartDirection = Direction.valueOf(matcher.group(3));
+        snakePart.prevPartDirection = matcher.group(2).equals("null") ? null : Direction.valueOf(matcher.group(2));
+        snakePart.nextPartDirection = matcher.group(3).equals("null") ? null : Direction.valueOf(matcher.group(3));
         return snakePart;
     }
 
@@ -97,7 +97,9 @@ public class SnakePart extends FieldObject {
 
     @Override
     public String serializeToString() {
-        return String.format("%d:%s:%s", snakeOwnerId, prevPartDirection.name(), nextPartDirection.name());
+        return String.format("%d:%s:%s", snakeOwnerId,
+                prevPartDirection == null ? "null" : prevPartDirection.name(),
+                nextPartDirection == null ? "null" : nextPartDirection.name());
     }
 
     public boolean isSnakeDead() {

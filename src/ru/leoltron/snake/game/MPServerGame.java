@@ -22,14 +22,14 @@ public class MPServerGame extends Game {
     }
 
     private static String createChangePacket(Collection<Pair<GamePoint, FieldObject>> changes) {
-        val result = new StringBuilder(String.valueOf(changes.size()) + "\n");
+        val result = new StringBuilder(String.valueOf(changes.size()));
         for (val change : changes) {
             val point = change.getItem1();
             val fo = change.getItem2();
             val isEmpty = fo == null;
-            result.append(String.format("%d:%d:%s:%s\n",
+            result.append(String.format("\n%d:%d:%s:%s",
                     point.x, point.y,
-                    isEmpty ? "null" : fo.getClass(),
+                    isEmpty ? "null" : fo.getClass().getName(),
                     isEmpty ? "" : fo.serializeToString()));
         }
         return result.toString();

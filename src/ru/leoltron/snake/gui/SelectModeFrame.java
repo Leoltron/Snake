@@ -71,7 +71,7 @@ public class SelectModeFrame extends JFrame {
                     "Неверный формат, адрес должен быть указан в формате\nимя_хоста:порт, порт должен быть числом от 1 до 65535",
                     "Ошибка", JOptionPane.ERROR_MESSAGE);
         } else
-            new ClientProtocol(btnPanel, pair.getItem1(), pair.getItem2());
+            new ClientProtocol(this, btnPanel, pair.getItem1(), pair.getItem2());
     }
 
     private void startMultiPlayerServer() {
@@ -81,9 +81,10 @@ public class SelectModeFrame extends JFrame {
             JOptionPane.showMessageDialog(btnPanel,
                     "Порт должен быть числом от 1 до 65535",
                     "Ошибка", JOptionPane.ERROR_MESSAGE);
+        } else {
+            this.setVisible(false);
+            new ServerProtocol(Integer.parseInt(result));
         }
-        new ServerProtocol(Integer.parseInt(result));
-
     }
 
     private Pair<String, Integer> tryExtractHostnameAndPort(String string) {
