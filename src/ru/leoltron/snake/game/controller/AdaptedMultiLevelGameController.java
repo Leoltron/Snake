@@ -40,8 +40,8 @@ public class AdaptedMultiLevelGameController extends MultiLevelGameController {
     protected void initLevels() {
         //Счет уровней начинается с единицы
         setDefaultLevel(new RandomGameFieldGenerator(), new RandomApplesGenerator(3), 2);
-        setLevel(1, new BorderGameFieldGenerator(), new RandomApplesGenerator());
-        setLevelWithFieldFromFile(2, "field2.txt", new RandomApplesGenerator(10), 1);
+        setLevel(2, new BorderGameFieldGenerator(), new RandomApplesGenerator());
+        setLevelWithFieldFromFile(1, "field2.txt", new RandomApplesGenerator(10), 1);
         setLevel(3, new BorderGameFieldGenerator(), new RandomApplesGenerator(), 5);
         setLevelWithFieldFromFile(5, "field2.txt", new RandomApplesGenerator(1), 1);
         setLevelWithFieldFromFile(6, "field1.txt", new RandomApplesGenerator(10), 20);

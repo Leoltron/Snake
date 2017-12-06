@@ -80,14 +80,14 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
                     sendDirectionUpdatePacket();
 
                     int currentTick = Integer.parseInt(match.group(1));
-                    int lastPacketReceivedTick = Integer.parseInt(match.group(2));
+                    int packetTickDelay = Integer.parseInt(match.group(2));
                     long delayMS = Long.parseLong(match.group(3));
                     int foAmount = Integer.parseInt(match.group(4));
                     System.out.printf("Packet info:\n" +
                             "\tcurrentTick: %d\n" +
                             "\tdelay: %d ms\n" +
-                            "\tlastPacketReceivedTick: %d\n" +
-                            "\tobjAmount: %d\n", currentTick, delayMS, lastPacketReceivedTick, foAmount);
+                            "\tpacketTickDelay: %d\n" +
+                            "\tobjAmount: %d\n", currentTick, delayMS, packetTickDelay, foAmount);
                     val foDescriptions = new String[foAmount];
                     info("Receiving packets... ");
                     for (int i = 0; i < foAmount; i++)
@@ -98,6 +98,8 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
                         info("Packet #" + i + ": " + foDescriptions[i]);
                     }
                     game.updateField(currentTick, foDescriptions);
+                    game.setPacketTickDelay(packetTickDelay);
+                    game.setMsDelay(delayMS);
                     SwingUtilities.updateComponentTreeUI(frame);
                 }
             } catch (IOException e) {

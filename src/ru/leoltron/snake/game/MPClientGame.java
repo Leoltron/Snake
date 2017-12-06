@@ -1,5 +1,7 @@
 package ru.leoltron.snake.game;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.field.GameField;
@@ -11,6 +13,12 @@ public class MPClientGame implements GameInfo, CurrentDirectionHolder {
     private GameField field;
     private int time;
     private Direction currentDirection;
+    @Getter
+    @Setter
+    private int packetTickDelay;
+    @Getter
+    @Setter
+    private long msDelay;
 
     public MPClientGame(int fieldWidth, int fieldHeight) {
         field = new GameField(fieldWidth, fieldHeight);

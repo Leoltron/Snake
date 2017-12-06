@@ -4,6 +4,7 @@ import lombok.val;
 import org.reflections.Reflections;
 import ru.leoltron.snake.game.GameInfo;
 import ru.leoltron.snake.game.LevelInfo;
+import ru.leoltron.snake.game.MPClientGame;
 import ru.leoltron.snake.game.entity.*;
 import ru.leoltron.snake.gui.drawers.IDrawer;
 import ru.leoltron.snake.gui.drawers.SnakeDrawer;
@@ -98,6 +99,19 @@ public class GamePanel extends JPanel {
             graphics.setColor(Color.BLACK);
             graphics.setFont(font);
             graphics.drawString(s, getSize().width - 2 - metrics.stringWidth(s), getSize().height - 2);
+        }
+        if (gameInfo instanceof MPClientGame) {
+            final MPClientGame mpClientGame = (MPClientGame) this.gameInfo;
+            int delay = mpClientGame.getPacketTickDelay();
+            long delayMs = mpClientGame.getMsDelay();
+            val font = getFont().deriveFont(20f);
+            val metrics = graphics.getFontMetrics(font);
+            graphics.setColor(delay > 0 ? Color.RED : Color.BLACK);
+            graphics.setFont(font);
+            graphics.drawString(String.format("Delay(Ticks): %d", delay), 2, 2 + metrics.getHeight());
+            graphics.setColor(Color.BLACK);
+            graphics.drawString(String.format("Delay(ms): %d", delayMs), 2, 2 + 2 * metrics.getHeight());
+
         }
     }
 

@@ -70,7 +70,7 @@ public class MPServer {
                 i--;
                 continue;
             }
-            clientInfos[i] = new ClientInfo(-1, -1);
+            clientInfos[i] = new ClientInfo(-1, -1, 0);
             try {
                 printWriters[i] = new PrintWriter(clientSockets[i].getOutputStream(), true);
                 new ClientInputHandlerThread(i, clientSockets[i]).start();
@@ -100,9 +100,9 @@ public class MPServer {
         info("Message: " + curTick + ":(clientInfo):" + packet.replace("\n", "\n\t"));
         info("Broadcasting update packet...");
         for (int i = 0; i < playersAmount; i++) {
-            val lastTick = clientInfos[i].lastPacketTickReceived <= 0 ? 0 : clientInfos[i].lastPacketTickReceived;
+            val packetTickDelay = clientInfos[i].packetTickDelay;
             val delay = clientInfos[i].lastPacketDelay <= 0 ? 0 : clientInfos[i].lastPacketDelay;
-            sendTo(i, String.format("%d:%d:%d:" + packet, curTick, lastTick, delay));
+            sendTo(i, String.format("%d:%d:%d:" + packet, curTick, packetTickDelay, delay));
             clientInfos[i].lastPacketDelay = -1;
         }
         lastPacketSendTime = System.currentTimeMillis();
@@ -112,12 +112,18 @@ public class MPServer {
         printWriters[id].println(message);
     }
 
+    private void updateClientDirection(int clientId, Direction newDirection, int packetTick) {
+        controllers[clientId].setCurrentDirection(newDirection);
+        clientInfos[clientId].setPacketTickDelay(game.getTime() - packetTick);
+    }
+
     @Data
     @AllArgsConstructor
     private static class ClientInfo {
 
         private long lastPacketDelay;
         private int lastPacketTickReceived;
+        private int packetTickDelay;
     }
 
     private class ClientInputHandlerThread extends Thread {
@@ -160,7 +166,10 @@ public class MPServer {
                     if (clientInfos[id].lastPacketDelay <= 0)
                         clientInfos[id].lastPacketDelay = System.currentTimeMillis() - lastPacketSendTime;
                     clientInfos[id].lastPacketTickReceived = tick;
+
+                    updateClientDirection(id, newDir, tick);
                     controllers[id].setCurrentDirection(newDir);
+                    clientInfos[id].setPacketTickDelay(game.getTime() - tick);
                 }
             } catch (IOException e) {
                 error("An error occurred during reading message:");
