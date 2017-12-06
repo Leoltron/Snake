@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.val;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.MPServerGame;
-import ru.leoltron.snake.game.controller.AdaptedMultiLevelGameController;
+import ru.leoltron.snake.game.controller.MultiLevelGameController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 import ru.leoltron.snake.util.LogUtils;
 
@@ -58,7 +58,7 @@ public class MPServer {
         printWriters = new PrintWriter[playersAmount];
         info("Initializing game...");
         for (int i = 0; i < playersAmount; i++) controllers[i] = new SnakeController(i);
-        game = new MPServerGame(new AdaptedMultiLevelGameController(controllers), 64, 32);
+        game = new MPServerGame(new MultiLevelGameController(controllers), 64, 32);
         info(String.format("Game initialized, waiting for %d player(s) to connect...", playersAmount));
         for (int i = 0; i < playersAmount; i++) {
             info("Waiting for player #" + i + "...");
@@ -163,13 +163,11 @@ public class MPServer {
                     val tick = Integer.parseInt(matcher.group(1));
                     val newDir = Direction.valueOf(matcher.group(2));
                     info(String.format("Packet successfully validated, tick: %d, new direction: %s", tick, newDir.name()));
-                    if (clientInfos[id].lastPacketDelay <= 0)
+                    if (clientInfos[id].lastPacketTickReceived != tick)
                         clientInfos[id].lastPacketDelay = System.currentTimeMillis() - lastPacketSendTime;
                     clientInfos[id].lastPacketTickReceived = tick;
 
                     updateClientDirection(id, newDir, tick);
-                    controllers[id].setCurrentDirection(newDir);
-                    clientInfos[id].setPacketTickDelay(game.getTime() - tick);
                 }
             } catch (IOException e) {
                 error("An error occurred during reading message:");

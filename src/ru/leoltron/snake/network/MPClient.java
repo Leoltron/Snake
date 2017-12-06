@@ -76,9 +76,6 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
                         System.err.println("Invalid update packet: " + line);
                         continue;
                     }
-                    info("Packet validated, sending reply...");
-                    sendDirectionUpdatePacket();
-
                     int currentTick = Integer.parseInt(match.group(1));
                     int packetTickDelay = Integer.parseInt(match.group(2));
                     long delayMS = Long.parseLong(match.group(3));
@@ -100,6 +97,8 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
                     game.updateField(currentTick, foDescriptions);
                     game.setPacketTickDelay(packetTickDelay);
                     game.setMsDelay(delayMS);
+                    info("Packet validated, sending reply...");
+                    sendDirectionUpdatePacket();
                     SwingUtilities.updateComponentTreeUI(frame);
                 }
             } catch (IOException e) {

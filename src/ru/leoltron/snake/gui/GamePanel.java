@@ -103,14 +103,11 @@ public class GamePanel extends JPanel {
         if (gameInfo instanceof MPClientGame) {
             final MPClientGame mpClientGame = (MPClientGame) this.gameInfo;
             int delay = mpClientGame.getPacketTickDelay();
-            long delayMs = mpClientGame.getMsDelay();
             val font = getFont().deriveFont(20f);
             val metrics = graphics.getFontMetrics(font);
             graphics.setColor(delay > 0 ? Color.RED : Color.BLACK);
             graphics.setFont(font);
             graphics.drawString(String.format("Delay(Ticks): %d", delay), 2, 2 + metrics.getHeight());
-            graphics.setColor(Color.BLACK);
-            graphics.drawString(String.format("Delay(ms): %d", delayMs), 2, 2 + 2 * metrics.getHeight());
 
         }
     }
