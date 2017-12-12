@@ -15,7 +15,7 @@ import java.util.Collection;
 
 public class Game implements GameInfo, LevelInfo {
 
-    public static final int TEMP_PAUSE_TIME_TICKS = 3;
+    private static final int TEMP_PAUSE_TIME_TICKS = 3;
     @Getter
     private int time;
 

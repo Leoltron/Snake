@@ -6,6 +6,7 @@ import lombok.val;
 import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.MPServerGame;
 import ru.leoltron.snake.game.controller.MultiLevelGameController;
+import ru.leoltron.snake.game.controller.snake.SimpleAISnakeController;
 import ru.leoltron.snake.game.controller.snake.SnakeController;
 import ru.leoltron.snake.util.LogUtils;
 
@@ -52,12 +53,13 @@ public class MPServer {
             e.printStackTrace();
             return;
         }
-        controllers = new SnakeController[playersAmount];
+        controllers = new SnakeController[playersAmount + 1];
         clientInfos = new ClientInfo[playersAmount];
         clientSockets = new Socket[playersAmount];
         printWriters = new PrintWriter[playersAmount];
         info("Initializing game...");
         for (int i = 0; i < playersAmount; i++) controllers[i] = new SnakeController(i);
+        controllers[playersAmount] = new SimpleAISnakeController(playersAmount);
         game = new MPServerGame(new MultiLevelGameController(controllers), 64, 32);
         info(String.format("Game initialized, waiting for %d player(s) to connect...", playersAmount));
         for (int i = 0; i < playersAmount; i++) {
@@ -156,6 +158,11 @@ public class MPServer {
             String inputLine;
             try {
                 while (!socket.isClosed() && (inputLine = in.readLine()) != null) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     info("Received message " + inputLine);
                     val matcher = CLIENT_UPDATE_PACKET_PATTERN.matcher(inputLine);
                     if (!matcher.matches())

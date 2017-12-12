@@ -36,6 +36,10 @@ public class GameKeyListener implements KeyListener {
         CONTROL_KEY_BINDINGS.add(player2Bindings);
     }
 
+    public static int getTotalKeyBinds() {
+        return CONTROL_KEY_BINDINGS.size();
+    }
+
     private CurrentDirectionHolder directionHolder;
     private Map<Integer, Direction> keyBindings;
 

@@ -47,9 +47,7 @@ public class SnakeDrawer implements IDrawer {
         }
     }
 
-    @Override
-    public BufferedImage getImage(FieldObject fieldObject, int time) {
-        val snakePart = (SnakePart) fieldObject;
+    public static BufferedImage getSnakeImage(SnakePart snakePart, int time) {
         val colorId = snakePart.getSnakeOwnerId();
         val nextDirection = snakePart.getNextPartDirection();
         val prevDirection = snakePart.getPrevPartDirection();
@@ -65,6 +63,21 @@ public class SnakeDrawer implements IDrawer {
         return rotateSnakeImage(img, prevDirection, nextDirection);
     }
 
+    private static BufferedImage rotateSnakeImage(@NonNull BufferedImage image, Direction dirPrev, Direction dirNext) {
+        if (dirNext == null && dirPrev == null)
+            return image;
+
+        val imgCenterX = image.getWidth(null) / 2;
+        val imgCenterY = image.getHeight(null) / 2;
+        dirNext = dirNext != null ? dirNext : dirPrev.reversed();
+        dirPrev = dirPrev != null ? dirPrev : dirNext.reversed();
+        val angle = getSnakeImagesRotation(dirNext, dirPrev);
+
+        val tx = AffineTransform.getRotateInstance(angle, imgCenterX, imgCenterY);
+        val op = new AffineTransformOp(tx, TYPE_BILINEAR);
+        return op.filter(image, null);
+    }
+
     private static BufferedImage getImage(String... path) throws IOException {
         return ImageIO.read(new File(String.join(File.separator, path)));
     }
@@ -78,19 +91,24 @@ public class SnakeDrawer implements IDrawer {
         return null;
     }
 
-    private BufferedImage rotateSnakeImage(@NonNull BufferedImage image, Direction dirPrev, Direction dirNext) {
-        if (dirNext == null && dirPrev == null)
-            return image;
+    public static BufferedImage[] getDemo(int snakeColor, int length) {
+        if (length < 2)
+            throw new IndexOutOfBoundsException("Snake length must be more than 1!");
+        val images = new BufferedImage[length];
+        val snakePart = new SnakePart();
+        snakePart.setSnakeOwnerId(snakeColor);
+        snakePart.setPrevPartDirection(RIGHT);
+        images[0] = getSnakeImage(snakePart, 1);
 
-        val imgCenterX = image.getWidth(null) / 2;
-        val imgCenterY = image.getHeight(null) / 2;
-        dirNext = dirNext != null ? dirNext : dirPrev.reversed();
-        dirPrev = dirPrev != null ? dirPrev : dirNext.reversed();
-        val angle = getSnakeImagesRotation(dirNext, dirPrev);
+        snakePart.setNextPartDirection(LEFT);
+        int i;
+        for (i = 1; i < length - 1; i++)
+            images[i] = getSnakeImage(snakePart, 1);
 
-        val tx = AffineTransform.getRotateInstance(angle, imgCenterX, imgCenterY);
-        val op = new AffineTransformOp(tx, TYPE_BILINEAR);
-        return op.filter(image, null);
+        snakePart.setPrevPartDirection(null);
+        images[i] = getSnakeImage(snakePart, 1);
+
+        return images;
     }
 
     private static HashMap<Pair<Direction, Direction>, Double> angleToRotateByDirections = new HashMap<>();
@@ -109,5 +127,10 @@ public class SnakeDrawer implements IDrawer {
 
     private static double getSnakeImagesRotation(Direction direction1, Direction direction2) {
         return angleToRotateByDirections.getOrDefault(Pair.create(direction1, direction2), 0d);
+    }
+
+    @Override
+    public BufferedImage getImage(FieldObject fieldObject, int time) {
+        return getSnakeImage((SnakePart) fieldObject, time);
     }
 }

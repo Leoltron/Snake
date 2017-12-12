@@ -30,7 +30,7 @@ public class LogUtils {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        primaryStream.println(message);
+        //primaryStream.println(message);
     }
 
 }

@@ -6,6 +6,7 @@ import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.MPClientGame;
 import ru.leoltron.snake.gui.GameFrame;
 import ru.leoltron.snake.gui.GameKeyListener;
+import ru.leoltron.snake.gui.HideParentWindowListener;
 import ru.leoltron.snake.util.LogUtils;
 
 import javax.swing.*;
@@ -60,7 +61,7 @@ public class MPClient implements WindowListener, CurrentDirectionHolder {
             closeAll();
             return;
         }
-        frame.setParentFrame(parentFrame);
+        frame.addWindowListener(new HideParentWindowListener(parentFrame));
         parentFrame.setVisible(false);
         frame.addWindowListener(this);
         frame.addKeyListener(new GameKeyListener(this, GameKeyListener.WASD_KEYS));

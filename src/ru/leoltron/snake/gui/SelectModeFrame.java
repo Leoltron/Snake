@@ -2,9 +2,6 @@ package ru.leoltron.snake.gui;
 
 import lombok.val;
 import ru.leoltron.snake.game.Game;
-import ru.leoltron.snake.game.controller.AdaptedMultiLevelGameController;
-import ru.leoltron.snake.game.controller.snake.SimpleAISnakeController;
-import ru.leoltron.snake.game.controller.snake.SnakeController;
 import ru.leoltron.snake.network.MPClient;
 import ru.leoltron.snake.network.MPServer;
 import ru.leoltron.snake.util.Pair;
@@ -12,6 +9,7 @@ import ru.leoltron.snake.util.Pair;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -22,11 +20,7 @@ public class SelectModeFrame extends JFrame {
 
     private static final Pattern HOST_PORT_PATTERN = Pattern.compile("([^:]+):([\\d]+)");
 
-    private JButton singlePlayerButton;
-    private JButton singlePlayerAndAIButton;
     private JPanel btnPanel;
-    private JButton multiPlayerHostButton;
-    private JButton multiPlayerJoinButton;
 
     public SelectModeFrame() {
         super("Snake");
@@ -39,19 +33,49 @@ public class SelectModeFrame extends JFrame {
             e.printStackTrace();
         }
         btnPanel = new JPanel();
-        btnPanel.setLayout(new GridLayout(4, 1, 5, 3));
-        btnPanel.add(singlePlayerButton = new JButton("Одиночная игра"));
-        singlePlayerButton.addActionListener(e -> startSinglePlayerGame());
-        btnPanel.add(singlePlayerAndAIButton = new JButton("Одиночная игра с компьютером"));
-        singlePlayerAndAIButton.addActionListener(e -> startDoublePlayerGame());
-        btnPanel.add(multiPlayerHostButton = new JButton("Мультиплеер (Создать)"));
-        multiPlayerHostButton.addActionListener(e -> startMultiPlayerServer());
-        btnPanel.add(multiPlayerJoinButton = new JButton("Мультиплеер (Присоединиться)"));
-        multiPlayerJoinButton.addActionListener(e -> joinMultiplayer());
+        btnPanel.setLayout(new GridLayout(3, 1, 5, 3));
+        addWithListener(new JButton("Одиночная игра"), e -> new SinglePlayerSettingsFrame(this).setVisible(true));
+        addWithListener(new JButton("Мультиплеер (Создать)"), e -> startMultiPlayerServer());
+        addWithListener(new JButton("Мультиплеер (Присоединиться)"), e -> joinMultiplayer());
         setContentPane(btnPanel);
         pack();
         setMinimumSize(getSize());
         this.setLocationRelativeTo(null);
+    }
+
+    static KeyListener getLevelKeyListener(Game game, GameFrame frame) {
+        return new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_G)
+                    frame.gamePanel.switchGridDrawMode();
+                else if (e.getKeyCode() == KeyEvent.VK_SPACE)
+                    tickGameAndUpdate(game, frame, true);
+                else if (e.isControlDown()) {
+                    switch (e.getKeyCode()) {
+                        case KeyEvent.VK_A:
+                            game.goToPrevLevel();
+                            break;
+                        case KeyEvent.VK_D:
+                            game.goToNextLevel();
+                            break;
+                        case KeyEvent.VK_L:
+                            game.restartLevel();
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        };
     }
 
     private static boolean isValidPort(String s) {
@@ -97,105 +121,14 @@ public class SelectModeFrame extends JFrame {
         }
     }
 
-    private static void startSinglePlayerGame(JFrame parent) throws IOException {
-        val scale = 0.25d;
-
-        val fieldWidth = 64;
-        val fieldHeight = 32;
-
-        val controller1 = new SnakeController(0);
-        val controller2 = new SnakeController(1);
-        val game = new Game(new AdaptedMultiLevelGameController(controller1, controller2), fieldWidth, fieldHeight);
-        val frame = new GameFrame(game, scale,
-                new GameKeyListener(controller1, 0),
-                new GameKeyListener(controller2, 1));
-        if (parent != null)
-            frame.setParentFrame(parent);
-        game.startNewGame();
-
-        frame.addKeyListener(getLevelKeyListener(game, frame));
-
-        val period = 300;
-        val timer = new Timer(period, actionEvent -> tickGameAndUpdate(game, frame, false));
-        timer.start();
-    }
-
-    private static void startDoublePlayerGame(JFrame parent) throws IOException {
-        val scale = 0.25d;
-
-        val fieldWidth = 64;
-        val fieldHeight = 32;
-
-        val controller1 = new SnakeController(0);
-        val controller2 = new SimpleAISnakeController(1);
-        val game = new Game(new AdaptedMultiLevelGameController(controller1, controller2), fieldWidth, fieldHeight);
-        val frame = new GameFrame(game, scale, new GameKeyListener(controller1, 0));
-        if (parent != null)
-            frame.setParentFrame(parent);
-        game.startNewGame();
-
-        frame.addKeyListener(getLevelKeyListener(game, frame));
-
-        val period = 300;
-        val timer = new Timer(period, actionEvent -> tickGameAndUpdate(game, frame, false));
-        timer.start();
-    }
-
-    private static KeyListener getLevelKeyListener(Game game, GameFrame frame) {
-        return new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_G)
-                    frame.gamePanel.switchGridDrawMode();
-                else if (e.getKeyCode() == KeyEvent.VK_SPACE)
-                    tickGameAndUpdate(game, frame, true);
-                else if (e.isControlDown()) {
-                    switch (e.getKeyCode()) {
-                        case KeyEvent.VK_A:
-                            game.goToPrevLevel();
-                            break;
-                        case KeyEvent.VK_D:
-                            game.goToNextLevel();
-                            break;
-                        case KeyEvent.VK_L:
-                            game.restartLevel();
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        };
-    }
-
-    private static void tickGameAndUpdate(Game game, JFrame frame, boolean forceTick) {
+    static void tickGameAndUpdate(Game game, JFrame frame, boolean forceTick) {
         game.tick(forceTick);
         SwingUtilities.updateComponentTreeUI(frame);
     }
 
-    private void startSinglePlayerGame() {
-        try {
-            startSinglePlayerGame(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void addWithListener(JButton button, ActionListener listener) {
+        btnPanel.add(button);
+        button.addActionListener(listener);
     }
 
-    private void startDoublePlayerGame() {
-        setVisible(false);
-        try {
-            startDoublePlayerGame(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-            setVisible(true);
-        }
-    }
 }

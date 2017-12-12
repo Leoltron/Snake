@@ -7,8 +7,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -16,7 +14,7 @@ public class GameFrame extends JFrame {
 
     private static final int FIELD_CELL_WIDTH = 64;
     private static final int FIELD_CELL_HEIGHT = 64;
-    public GamePanel gamePanel;
+    GamePanel gamePanel;
 
     public GameFrame(GameInfo gameInfo, double scale, KeyListener... listeners) throws IOException {
         val panelWidth = (int) (gameInfo.getFieldWidth() * FIELD_CELL_WIDTH * scale);
@@ -42,42 +40,4 @@ public class GameFrame extends JFrame {
         }
     }
 
-    public void setParentFrame(JFrame frame) {
-        this.addWindowListener(new WindowListener() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                frame.setVisible(true);
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-
-            }
-        });
-    }
 }
