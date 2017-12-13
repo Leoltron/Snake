@@ -62,7 +62,7 @@ public class PredefinedFieldGenerator extends GameFieldGenerator {
     }
 
     @Override
-    protected Map<GamePoint, FieldObject> generateFieldObjects(int fieldWidth, int fieldHeight) {
+    public Map<GamePoint, FieldObject> generateFieldObjects(int fieldWidth, int fieldHeight) {
         if (fieldWidth != this.fieldWidth || fieldHeight != this.fieldHeight)
             throw new IllegalArgumentException(String.format("Expected size: (%d, %d), got: (%d, %d)",
                     this.fieldWidth,

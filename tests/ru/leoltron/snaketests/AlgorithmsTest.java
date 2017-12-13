@@ -10,6 +10,7 @@ import ru.leoltron.snake.util.algorithms.graph.Vertex;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
@@ -101,6 +102,24 @@ public class AlgorithmsTest {
         val result = Algorithms.getBridges(graph);
         val expected = new HashSet<SimpleEdge>();
         expected.add(new SimpleEdge(vertices.get(0), vertices.get(3)));
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testBfs(){
+        SimpleGraph graph = new SimpleGraph();
+        addEdge(graph, 0, 1);
+        addEdge(graph, 0, 2);
+        addEdge(graph, 1, 2);
+        addEdge(graph, 1, 3);
+        addEdge(graph, 1, 4);
+        addEdge(graph, 4, 5);
+        addEdge(graph, 2, 5);
+        val result = Algorithms.bfs(vertices.get(0));
+        val expected = new HashMap<Vertex, Integer>();
+        int[] expected_dist = {0, 1, 1, 2, 2, 2};
+        for (int i = 0; i < 6; i++)
+            expected.put(vertices.get(i), expected_dist[i]);
         assertEquals(expected, result);
     }
 }

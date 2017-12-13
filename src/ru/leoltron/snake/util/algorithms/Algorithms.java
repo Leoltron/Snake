@@ -34,7 +34,7 @@ public final class Algorithms {
         return components;
     }
 
-    public static HashMap<Vertex, Integer> bfs(Vertex start) throws InterruptedException {
+    public static HashMap<Vertex, Integer> bfs(Vertex start)  {
         val distances = new HashMap<Vertex, Integer>();
         distances.put(start, 0);
         val queue = new SimpleQueue<Vertex>();

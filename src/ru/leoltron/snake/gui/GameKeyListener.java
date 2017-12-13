@@ -20,7 +20,7 @@ public class GameKeyListener implements KeyListener {
     public static final int WASD_KEYS = 1;
     static {
         val player1Bindings = new HashMap<Integer, Direction>();
-        MapUtils.fillMap(player1Bindings,
+        new MapUtils(Integer.class, Direction.class).fillMap(player1Bindings,
                 KeyEvent.VK_UP, UP,
                 KeyEvent.VK_DOWN, DOWN,
                 KeyEvent.VK_LEFT, LEFT,
@@ -28,7 +28,7 @@ public class GameKeyListener implements KeyListener {
         CONTROL_KEY_BINDINGS.add(player1Bindings);
 
         val player2Bindings = new HashMap<Integer, Direction>();
-        MapUtils.fillMap(player2Bindings,
+        new MapUtils(Integer.class, Direction.class).fillMap(player2Bindings,
                 KeyEvent.VK_W, UP,
                 KeyEvent.VK_S, DOWN,
                 KeyEvent.VK_A, LEFT,

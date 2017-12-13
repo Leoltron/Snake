@@ -77,10 +77,10 @@ public class SnakeTests extends Assert {
 
         val controller = new SnakeController(4);
         val game = new Game(new SingleLevelGameController(
-                new EmptyAppleGenerator(),
-                new BorderGameFieldGenerator(),
-                controller),
-                width, height);
+                                new EmptyAppleGenerator(),
+                                new BorderGameFieldGenerator(),
+                                controller),
+                            width, height);
         game.startNewGame();
 
         val headBeforeTickLocation = findSnakeHead(game, 0, 0, width, height);

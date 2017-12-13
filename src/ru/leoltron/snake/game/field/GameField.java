@@ -4,10 +4,17 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import ru.leoltron.snake.game.CollisionException;
+import ru.leoltron.snake.game.Direction;
 import ru.leoltron.snake.game.entity.FieldObject;
 import ru.leoltron.snake.game.entity.LivingFieldObject;
+import ru.leoltron.snake.game.entity.Wall;
+import ru.leoltron.snake.util.BijectionHashMap;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Pair;
+import ru.leoltron.snake.util.algorithms.graph.SimpleEdge;
+import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
+import ru.leoltron.snake.util.algorithms.graph.Vertex;
+import ru.leoltron.snake.util.algorithms.graph.WeightedVertex;
 
 import java.awt.*;
 import java.util.*;
@@ -126,4 +133,5 @@ public class GameField {
             }
         return result;
     }
+
 }

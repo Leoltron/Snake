@@ -7,6 +7,7 @@ import ru.leoltron.snake.game.field.GameField;
 import ru.leoltron.snake.util.BijectionHashMap;
 import ru.leoltron.snake.util.GamePoint;
 import ru.leoltron.snake.util.Triplet;
+import ru.leoltron.snake.util.algorithms.GameFieldUtil;
 import ru.leoltron.snake.util.algorithms.graph.SimpleEdge;
 import ru.leoltron.snake.util.algorithms.graph.SimpleGraph;
 import ru.leoltron.snake.util.algorithms.graph.Vertex;
@@ -51,11 +52,7 @@ public class SimpleAISnakeController extends AISnakeController {
     }
 
     private WeightedVertex getTargetVartex(SimpleGraph graph, WeightedVertex head) {
-        HashMap<Vertex, Integer> distances = null;
-        try {
-            distances = bfs(head);
-        } catch (InterruptedException ignored) {
-        }
+        val distances = bfs(head);
         WeightedVertex answer = null;
         assert distances != null;
         for (val vertex : distances.keySet()) {
@@ -68,11 +65,7 @@ public class SimpleAISnakeController extends AISnakeController {
     }
 
     private WeightedVertex getNearestVertexToHead(SimpleGraph graph, WeightedVertex start, WeightedVertex head) {
-        HashMap<Vertex, Integer> distances = null;
-        try {
-            distances = bfs(start);
-        } catch (InterruptedException ignored) {
-        }
+        val distances = bfs(start);
         WeightedVertex nearestVertex = null;
         for (val edges : head.getHeighbors()) {
             val nextVertex = (WeightedVertex) edges.getTo();
@@ -106,7 +99,7 @@ public class SimpleAISnakeController extends AISnakeController {
     }
 
     private Triplet<SimpleGraph, Map<GamePoint, WeightedVertex>, Map<WeightedVertex, GamePoint>>
-    BuildGraph(GameField field) {
+                BuildGraph(GameField field) {
         SimpleGraph graph = new SimpleGraph();
         val gamePointAndVertex = new BijectionHashMap<GamePoint, WeightedVertex>();
         for (int i = 0; i < field.getFieldWidth(); i++)
@@ -122,14 +115,7 @@ public class SimpleAISnakeController extends AISnakeController {
                 graph.addVertex(currentVertex);
             }
         for (val vertex : graph.getVertices()) {
-            val currentPoint = gamePointAndVertex.getReverse((WeightedVertex) vertex);
-            for (val direction : Direction.values()) {
-                val nextPoint = currentPoint.translated(direction);
-                val nextObject = field.getObjectAt(nextPoint);
-                if (nextObject != null && nextObject.getClass() == Wall.class)
-                    continue;
-                graph.addEdge(new SimpleEdge(vertex, gamePointAndVertex.get(nextPoint)));
-            }
+            GameFieldUtil.tryAddEdges(vertex, gamePointAndVertex, graph, field);
         }
         return Triplet.create(graph,
                 gamePointAndVertex.toOneDirectionalMap(),
