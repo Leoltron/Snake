@@ -24,7 +24,7 @@ public class MPServer {
     private MPServerGame game;
     private int playersAmount;
     private SnakeController[] controllers;
-    private ClientInfo[] clientInfos;
+    private final ClientInfo[] clientInfos;
     private Socket[] clientSockets;
     private PrintWriter[] printWriters;
     private long lastPacketSendTime = 0;
@@ -44,6 +44,7 @@ public class MPServer {
     }
 
     public MPServer(int port, int playersAmount) {
+        clientInfos = new ClientInfo[playersAmount];
         info(String.format("Starting server at port %d...", port));
         this.playersAmount = playersAmount;
         ServerSocket serverSocket;
@@ -54,7 +55,6 @@ public class MPServer {
             return;
         }
         controllers = new SnakeController[playersAmount + 1];
-        clientInfos = new ClientInfo[playersAmount];
         clientSockets = new Socket[playersAmount];
         printWriters = new PrintWriter[playersAmount];
         info("Initializing game...");
@@ -102,10 +102,12 @@ public class MPServer {
         info("Message: " + curTick + ":(clientInfo):" + packet.replace("\n", "\n\t"));
         info("Broadcasting update packet...");
         for (int i = 0; i < playersAmount; i++) {
-            val packetTickDelay = clientInfos[i].packetTickDelay;
-            val delay = clientInfos[i].lastPacketDelay <= 0 ? 0 : clientInfos[i].lastPacketDelay;
-            sendTo(i, String.format("%d:%d:%d:" + packet, curTick, packetTickDelay, delay));
-            clientInfos[i].lastPacketDelay = -1;
+            synchronized (clientInfos[i]) {
+                val packetTickDelay = clientInfos[i].packetTickDelay;
+                val delay = clientInfos[i].lastPacketDelay <= 0 ? 0 : clientInfos[i].lastPacketDelay;
+                sendTo(i, String.format("%d:%d:%d:" + packet, curTick, packetTickDelay, delay));
+                clientInfos[i].lastPacketDelay = -1;
+            }
         }
         lastPacketSendTime = System.currentTimeMillis();
     }
@@ -116,16 +118,18 @@ public class MPServer {
 
     private void updateClientDirection(int clientId, Direction newDirection, int packetTick) {
         controllers[clientId].setCurrentDirection(newDirection);
-        clientInfos[clientId].setPacketTickDelay(game.getTime() - packetTick);
+        synchronized (clientInfos[clientId]) {
+            clientInfos[clientId].setPacketTickDelay(game.getTime() - packetTick);
+        }
     }
 
     @Data
     @AllArgsConstructor
     private static class ClientInfo {
 
-        private long lastPacketDelay;
-        private int lastPacketTickReceived;
-        private int packetTickDelay;
+        private volatile long lastPacketDelay;
+        private volatile int lastPacketTickReceived;
+        private volatile int packetTickDelay;
     }
 
     private class ClientInputHandlerThread extends Thread {
@@ -170,10 +174,11 @@ public class MPServer {
                     val tick = Integer.parseInt(matcher.group(1));
                     val newDir = Direction.valueOf(matcher.group(2));
                     info(String.format("Packet successfully validated, tick: %d, new direction: %s", tick, newDir.name()));
-                    if (clientInfos[id].lastPacketTickReceived != tick)
-                        clientInfos[id].lastPacketDelay = System.currentTimeMillis() - lastPacketSendTime;
-                    clientInfos[id].lastPacketTickReceived = tick;
-
+                    synchronized (clientInfos[id]) {
+                        if (clientInfos[id].lastPacketTickReceived != tick)
+                            clientInfos[id].lastPacketDelay = System.currentTimeMillis() - lastPacketSendTime;
+                        clientInfos[id].lastPacketTickReceived = tick;
+                    }
                     updateClientDirection(id, newDir, tick);
                 }
             } catch (IOException e) {
